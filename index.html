@@ -176,9 +176,8 @@
         <div class="container mx-auto flex items-center justify-between">
             <h1 class="text-2xl font-bold text-gray-100">Admin Panel</h1>
             <div class="flex space-x-4">
-                <!-- Changed "Dashboard" to "Administración de Usuarios" and removed border classes -->
+                <!-- Updated button text and removed border classes -->
                 <button class="text-gray-400 hover:text-white font-semibold">Administración de Usuarios</button>
-                <!-- Removed border classes from "Settings" button -->
                 <button class="text-white font-semibold">Settings</button>
             </div>
         </div>
@@ -203,6 +202,11 @@
                             </a>
                         </li>
                         <li class="mb-2">
+                            <a href="#" id="nav-modelos" class="sidebar-nav-item">
+                                <span class="mr-3">🧠</span> Modelos
+                            </a>
+                        </li>
+                        <li class="mb-2">
                             <a href="#" id="nav-ingesta" class="sidebar-nav-item">
                                 <span class="mr-3">📥</span> Ingesta
                             </a>
@@ -223,7 +227,7 @@
                     <h3 class="text-xl font-semibold mb-4 border-b border-gray-700 pb-2 text-blue-400 font-bold">🤖 Configuración General</h3>
                     <div class="space-y-4">
                         <div class="flex items-center justify-between">
-                            <label for="enable-signups" class="form-label mb-0">Habilitar Nuevos Registros</label>
+                            <label for="enable-signups" class="form-label mb-0">Habilitar Registro de nuevos usuarios</label>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" id="enable-signups" class="sr-only peer" checked>
                                 <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
@@ -232,26 +236,12 @@
                         <div>
                             <label for="default-user-role" class="form-label">Rol de Usuario por Defecto</label>
                             <select id="default-user-role" class="form-select">
-                                <option>pending</option>
-                                <option>user</option>
-                                <option>admin</option>
+                                <option>Consulta</option>
+                                <option>Administrador</option>
                             </select>
                             <p class="help-text">Define el rol asignado a los nuevos usuarios registrados.</p>
                         </div>
-                        <div class="flex items-center justify-between">
-                            <label for="show-admin-details" class="form-label mb-0">Mostrar Detalles de Admin en Superposición Pendiente</label>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" id="show-admin-details" class="sr-only peer" checked>
-                                <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                            </label>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <label for="enable-community-sharing" class="form-label mb-0">Habilitar Compartir en Comunidad</label>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" id="enable-community-sharing" class="sr-only peer" checked>
-                                <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                            </label>
-                        </div>
+                        
                         <div>
                             <label for="jwt-expiration" class="form-label">Expiración JWT</label>
                             <input type="number" id="jwt-expiration" value="-1" class="form-input" placeholder="-1">
@@ -267,7 +257,7 @@
 
                 <!-- Usuarios Panel -->
                 <div id="panel-usuarios" class="content-panel">
-                    <h3 class="text-xl font-semibold mb-4 border-b border-gray-700 pb-2 text-blue-400 font-bold">👥 Permisos de Usuario y Modelos</h3>
+                    <h3 class="text-xl font-semibold mb-4 border-b border-gray-700 pb-2 text-blue-400 font-bold">👥 Permisos de Usuario</h3>
                     <div class="space-y-4">
                         <div class="flex items-center justify-between">
                             <label for="allow-chat-deletion" class="form-label mb-0">Permitir Eliminación de Chat</label>
@@ -276,7 +266,22 @@
                                 <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
                             </label>
                         </div>
-                        <h4 class="text-lg font-medium text-gray-300 mt-6 mb-2 font-bold">Gestionar Modelos</h4>
+                        <!-- New field for "Guardar datos privados" -->
+                        <div class="flex items-center justify-between">
+                            <label for="save-private-data" class="form-label mb-0">Guardar datos privados</label>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="save-private-data" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                        <!-- "Gestionar Modelos" section removed from here -->
+                    </div>
+                </div>
+
+                <!-- Modelos Panel (New) -->
+                <div id="panel-modelos" class="content-panel">
+                    <h3 class="text-xl font-semibold mb-4 border-b border-gray-700 pb-2 text-blue-400 font-bold">🧠 Configuración de Modelos</h3>
+                    <div class="space-y-4">
                         <div>
                             <label for="default-model" class="form-label">Modelo por Defecto</label>
                             <select id="default-model" class="form-select">
@@ -294,7 +299,7 @@
                                 <label class="relative inline-flex items-center cursor-pointer">
                                     <input type="checkbox" id="model-whitelisting-toggle" class="sr-only peer" checked>
                                     <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                                    </label>
+                                </label>
                             </div>
                             <div id="model-whitelist-container" class="space-y-2 p-4 bg-gray-700 rounded-md">
                                 <!-- Model whitelist items will be added here by JS -->
@@ -306,38 +311,56 @@
 
                 <!-- Ingesta Panel -->
                 <div id="panel-ingesta" class="content-panel">
-                    <h3 class="text-xl font-semibold mb-4 border-b border-gray-700 pb-2 text-blue-400 font-bold">📥 Configuración de Ingesta y Búsqueda</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <section id="qdrant-config-ingesta" class="space-y-4">
-                            <h4 class="text-lg font-medium text-gray-300 font-bold">Qdrant (Base de Datos Vectorial)</h4>
+                    <h3 class="text-xl font-semibold mb-4 border-b border-gray-700 pb-2 text-blue-400 font-bold">📥 Configuración de Ingesta</h3>
+                    <div class="space-y-6 mb-2">
+                        <section id="vector-db-config" class="space-y-4 p-4 bg-gray-700 rounded-md border border-gray-600">
+                            <h4 class="text-lg font-medium text-gray-300 font-bold">Base de Datos Vectorial</h4>
                             <div>
-                                <label for="optimization-scenario" class="form-label">Escenario de Optimización</label>
-                                <select id="optimization-scenario" class="form-select">
-                                    <option>Balanced</option>
-                                    <option>High Precision</option>
-                                    <option>High Recall</option>
+                                <label for="vector-db-client" class="form-label">Cliente de Base de Datos Vectorial</label>
+                                <select id="vector-db-client" class="form-select">
+                                    <option>Qdrant</option>
+                                    <option>Pinecone</option>
+                                    <option>Weaviate</option>
+                                    <option>Chroma</option>
                                 </select>
-                                <p class="help-text">Define el equilibrio entre velocidad y precisión de la búsqueda.</p>
+                                <p class="help-text">Selecciona el cliente de la base de datos vectorial a utilizar.</p>
                             </div>
                             <div>
-                                <label for="hnsw-ef" class="form-label">Número de Vecinos (hnsw_ef)</label>
-                                <input type="number" id="hnsw-ef" value="200" class="form-input" placeholder="ej. 100-500">
-                                <p class="help-text">Controla la profundidad de la búsqueda en el grafo HNSW.</p>
+                                <label for="vector-db-url" class="form-label">URL de Conexión</label>
+                                <input type="url" id="vector-db-url" class="form-input" placeholder="ej. http://localhost:6333">
+                                <p class="help-text">URL de conexión a la base de datos vectorial.</p>
                             </div>
                             <div>
-                                <label for="retrieve-fragments" class="form-label">Fragmentos a Recuperar (k)</label>
-                                <input type="number" id="retrieve-fragments" value="5" class="form-input" placeholder="ej. 1-10">
-                                <p class="help-text">Cantidad de fragmentos de documentos más relevantes a recuperar.</p>
+                                <label for="vector-db-access-token" class="form-label">Access Token (Opcional)</label>
+                                <input type="password" id="vector-db-access-token" class="form-input" placeholder="••••••••••••••••••••••••">
+                                <p class="help-text">Token de acceso para autenticación (si es requerido).</p>
                             </div>
-                            <div class="flex items-center pt-2">
-                                <input id="exact-search" type="checkbox" class="form-checkbox">
-                                <label for="exact-search" class="ml-2 block text-sm text-gray-300">Habilitar Búsqueda Exacta</label>
+                            <div>
+                                <label for="vector-db-collection" class="form-label">Colección de Datos</label>
+                                <input type="text" id="vector-db-collection" class="form-input" placeholder="ej. my_collection">
+                                <p class="help-text">Nombre de la colección o índice a utilizar.</p>
                             </div>
-                            <p class="help-text -mt-3">Si está marcada, la búsqueda será más precisa pero potencialmente más lenta.</p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="hnsw-ef" class="form-label">Número de Vecinos (hnsw_ef)</label>
+                                    <input type="number" id="hnsw-ef" value="200" class="form-input" placeholder="ej. 100-500">
+                                    <p class="help-text">Controla la profundidad de la búsqueda en el grafo HNSW.</p>
+                                </div>
+                                <div>
+                                    <label for="retrieve-fragments" class="form-label">Fragmentos a Recuperar (k)</label>
+                                    <input type="number" id="retrieve-fragments" value="5" class="form-input" placeholder="ej. 1-10">
+                                    <p class="help-text">Cantidad de fragmentos de documentos más relevantes a recuperar.</p>
+                                </div>
+                            </div>
+                            <!-- Removed "Habilitar Búsqueda Exacta" -->
                         </section>
+                    </div>
 
-                        <section id="splitter-config-ingesta" class="space-y-4">
-                            <h4 class="text-lg font-medium text-gray-300 font-bold">División de Texto (Splitter)</h4>
+		            <h3 class="text-xl font-semibold mt-4 mb-4 border-t border-b border-gray-700 pb-2 pt-2 text-blue-400 font-bold">📥 Configuración de Busqueda</h3>
+                    <div class="space-y-6">
+
+                        <section id="search-config" class="space-y-4 p-4 bg-gray-700 rounded-md border border-gray-600">
+                            <h4 class="text-lg font-medium text-gray-300 font-bold">Configuración de Búsqueda</h4>
                             <div>
                                 <label for="splitter-type" class="form-label">Tipo de Divisor</label>
                                 <select id="splitter-type" class="form-select">
@@ -371,20 +394,12 @@
                                 <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
                             </label>
                         </div>
-                        <div>
-                            <label for="web-search-engine" class="form-label">Motor de Búsqueda Web</label>
-                            <select id="web-search-engine" class="form-select">
-                                <option>duckduckgo</option>
-                                <option>google</option>
-                                <option>bing</option>
-                            </select>
-                            <p class="help-text">Selecciona el motor de búsqueda a utilizar para el scraping web.</p>
-                        </div>
+                        <!-- Removed "Motor de Búsqueda Web" -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label for="search-result-count" class="form-label">Conteo de Resultados de Búsqueda</label>
-                                <input type="number" id="search-result-count" value="3" class="form-input">
-                                <p class="help-text">Número de resultados a recuperar por búsqueda.</p>
+                                <label for="depth-level" class="form-label">Nivel de profundidad</label>
+                                <input type="number" id="depth-level" value="3" min="1" max="5" class="form-input">
+                                <p class="help-text">Define la profundidad de la búsqueda web (máx. 5).</p>
                             </div>
                             <div>
                                 <label for="concurrent-requests" class="form-label">Solicitudes Concurrentes</label>
@@ -400,12 +415,7 @@
                                 <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
                             </label>
                         </div>
-                        <h4 class="text-lg font-medium text-gray-300 mt-6 mb-2 font-bold">Configuración del Cargador de YouTube</h4>
-                        <div>
-                            <label for="youtube-language" class="form-label">Idioma</label>
-                            <input type="text" id="youtube-language" value="en" class="form-input">
-                            <p class="help-text">Idioma para la carga de contenido de YouTube (ej. 'es', 'en').</p>
-                        </div>
+                        <!-- Removed "Configuración del Cargador de YouTube" section -->
                     </div>
                 </div>
 
@@ -424,13 +434,14 @@
                 // General
                 enableSignups: document.getElementById('enable-signups'),
                 defaultUserRole: document.getElementById('default-user-role'),
-                showAdminDetails: document.getElementById('show-admin-details'),
-                enableCommunitySharing: document.getElementById('enable-community-sharing'),
                 jwtExpiration: document.getElementById('jwt-expiration'),
                 webhookUrl: document.getElementById('webhook-url'),
 
                 // Usuarios
                 allowChatDeletion: document.getElementById('allow-chat-deletion'),
+                savePrivateData: document.getElementById('save-private-data'),
+
+                // Modelos
                 defaultModel: document.getElementById('default-model'),
                 modelWhitelistingToggle: document.getElementById('model-whitelisting-toggle'),
                 modelWhitelistContainer: document.getElementById('model-whitelist-container'),
@@ -440,23 +451,26 @@
                 cancelAddModelButton: document.getElementById('cancel-add-model'),
                 confirmAddModelButton: document.getElementById('confirm-add-model'),
 
-                // Ingesta
+                // Ingesta (Updated fields)
+                vectorDbClient: document.getElementById('vector-db-client'),
+                vectorDbUrl: document.getElementById('vector-db-url'),
+                vectorDbAccessToken: document.getElementById('vector-db-access-token'),
+                vectorDbCollection: document.getElementById('vector-db-collection'),
                 optimizationScenario: document.getElementById('optimization-scenario'),
                 hnswEf: document.getElementById('hnsw-ef'),
                 retrieveFragments: document.getElementById('retrieve-fragments'),
-                exactSearch: document.getElementById('exact-search'),
+                // exactSearch removed
                 splitterType: document.getElementById('splitter-type'),
                 chunkSize: document.getElementById('chunk-size'),
                 chunkOverlap: document.getElementById('chunk-overlap'),
 
-                // Web Scraping
+                // Web Scraping (Updated fields)
                 enableWebSearch: document.getElementById('enable-web-search'),
-                webSearchEngine: document.getElementById('web-search-engine'),
-                searchResultCount: document.getElementById('search-result-count'),
+                // webSearchEngine removed
+                depthLevel: document.getElementById('depth-level'), // Renamed from searchResultCount
                 concurrentRequests: document.getElementById('concurrent-requests'),
                 bypassSslVerification: document.getElementById('bypass-ssl-verification'),
-                youtubeLanguage: document.getElementById('youtube-language'),
-                // depthLevel, depthAlert, parallelismLevel are intentionally removed as they were not in the provided image.
+                // youtubeLanguage removed
 
                 // Global
                 saveButton: document.getElementById('save-button'),
@@ -468,12 +482,14 @@
                 navButtons: {
                     general: document.getElementById('nav-general'),
                     usuarios: document.getElementById('nav-usuarios'),
+                    modelos: document.getElementById('nav-modelos'),
                     ingesta: document.getElementById('nav-ingesta'),
                     webScraping: document.getElementById('nav-web-scraping'),
                 },
                 contentPanels: {
                     general: document.getElementById('panel-general'),
                     usuarios: document.getElementById('panel-usuarios'),
+                    modelos: document.getElementById('panel-modelos'),
                     ingesta: document.getElementById('panel-ingesta'),
                     webScraping: document.getElementById('panel-web-scraping'),
                 }
@@ -499,33 +515,38 @@
             const defaultConfig = {
                 // General
                 enableSignups: true,
-                defaultUserRole: 'pending',
-                showAdminDetails: true,
-                enableCommunitySharing: true,
+                defaultUserRole: 'Consulta',
                 jwtExpiration: -1,
                 webhookUrl: 'https://example.com/webhook',
 
                 // Usuarios
                 allowChatDeletion: true,
-                defaultModel: 'gpt-3.5-turbo',
-                modelWhitelisting: ['gpt-3.5-turbo', 'gpt-4o', 'City Weather'], // Example models
+                savePrivateData: true,
                 
-                // Ingesta
+                // Modelos
+                defaultModel: 'gpt-3.5-turbo',
+                modelWhitelisting: ['gpt-3.5-turbo', 'gpt-4o', 'City Weather'],
+
+                // Ingesta (Updated defaults)
+                vectorDbClient: 'Qdrant',
+                vectorDbUrl: 'http://localhost:6333',
+                vectorDbAccessToken: '',
+                vectorDbCollection: 'my_collection',
                 optimizationScenario: 'Balanced',
                 hnswEf: 200,
                 retrieveFragments: 5,
-                exactSearch: false,
+                // exactSearch removed
                 splitterType: 'TokenTextSplitter',
                 chunkSize: 1024,
                 chunkOverlap: 200,
 
-                // Web Scraping
+                // Web Scraping (Updated defaults)
                 enableWebSearch: true,
-                webSearchEngine: 'duckduckgo',
-                searchResultCount: 3,
+                // webSearchEngine removed
+                depthLevel: 3, // Renamed from searchResultCount, max 5
                 concurrentRequests: 10,
                 bypassSslVerification: true,
-                youtubeLanguage: 'en',
+                // youtubeLanguage removed
             };
 
             let currentModelWhitelist = [...defaultConfig.modelWhitelisting];
@@ -581,32 +602,37 @@
                     // General
                     enableSignups: elements.enableSignups.checked,
                     defaultUserRole: elements.defaultUserRole.value,
-                    showAdminDetails: elements.showAdminDetails.checked,
-                    enableCommunitySharing: elements.enableCommunitySharing.checked,
                     jwtExpiration: parseInt(elements.jwtExpiration.value, 10),
                     webhookUrl: elements.webhookUrl.value,
 
                     // Usuarios
                     allowChatDeletion: elements.allowChatDeletion.checked,
+                    savePrivateData: elements.savePrivateData.checked,
+                    
+                    // Modelos
                     defaultModel: elements.defaultModel.value,
                     modelWhitelisting: elements.modelWhitelistingToggle.checked ? currentModelWhitelist : [],
-                    
+
                     // Ingesta
+                    vectorDbClient: elements.vectorDbClient.value,
+                    vectorDbUrl: elements.vectorDbUrl.value,
+                    vectorDbAccessToken: elements.vectorDbAccessToken.value,
+                    vectorDbCollection: elements.vectorDbCollection.value,
                     optimizationScenario: elements.optimizationScenario.value,
                     hnswEf: parseInt(elements.hnswEf.value, 10),
                     retrieveFragments: parseInt(elements.retrieveFragments.value, 10),
-                    exactSearch: elements.exactSearch.checked,
+                    // exactSearch removed
                     splitterType: elements.splitterType.value,
                     chunkSize: parseInt(elements.chunkSize.value, 10),
                     chunkOverlap: parseInt(elements.chunkOverlap.value, 10),
 
                     // Web Scraping
                     enableWebSearch: elements.enableWebSearch.checked,
-                    webSearchEngine: elements.webSearchEngine.value,
-                    searchResultCount: parseInt(elements.searchResultCount.value, 10),
+                    // webSearchEngine removed
+                    depthLevel: parseInt(elements.depthLevel.value, 10), // Renamed
                     concurrentRequests: parseInt(elements.concurrentRequests.value, 10),
                     bypassSslVerification: elements.bypassSslVerification.checked,
-                    youtubeLanguage: elements.youtubeLanguage.value,
+                    // youtubeLanguage removed
                 };
                 
                 console.log('Guardando configuración:', currentConfig);
@@ -617,34 +643,39 @@
                 // General
                 if (elements.enableSignups) elements.enableSignups.checked = defaultConfig.enableSignups;
                 if (elements.defaultUserRole) elements.defaultUserRole.value = defaultConfig.defaultUserRole;
-                if (elements.showAdminDetails) elements.showAdminDetails.checked = defaultConfig.showAdminDetails;
-                if (elements.enableCommunitySharing) elements.enableCommunitySharing.checked = defaultConfig.enableCommunitySharing;
                 if (elements.jwtExpiration) elements.jwtExpiration.value = defaultConfig.jwtExpiration;
                 if (elements.webhookUrl) elements.webhookUrl.value = defaultConfig.webhookUrl;
 
                 // Usuarios
                 if (elements.allowChatDeletion) elements.allowChatDeletion.checked = defaultConfig.allowChatDeletion;
+                if (elements.savePrivateData) elements.savePrivateData.checked = defaultConfig.savePrivateData;
+                
+                // Modelos
                 if (elements.defaultModel) elements.defaultModel.value = defaultConfig.defaultModel;
                 if (elements.modelWhitelistingToggle) elements.modelWhitelistingToggle.checked = true; // Assume whitelisting is enabled by default
                 currentModelWhitelist = [...defaultConfig.modelWhitelisting];
                 renderModelWhitelist(); // Re-render whitelist after reset
                 
                 // Ingesta
+                if (elements.vectorDbClient) elements.vectorDbClient.value = defaultConfig.vectorDbClient;
+                if (elements.vectorDbUrl) elements.vectorDbUrl.value = defaultConfig.vectorDbUrl;
+                if (elements.vectorDbAccessToken) elements.vectorDbAccessToken.value = defaultConfig.vectorDbAccessToken;
+                if (elements.vectorDbCollection) elements.vectorDbCollection.value = defaultConfig.vectorDbCollection;
                 if (elements.optimizationScenario) elements.optimizationScenario.value = defaultConfig.optimizationScenario;
                 if (elements.hnswEf) elements.hnswEf.value = defaultConfig.hnswEf;
                 if (elements.retrieveFragments) elements.retrieveFragments.value = defaultConfig.retrieveFragments;
-                if (elements.exactSearch) elements.exactSearch.checked = defaultConfig.exactSearch;
+                // exactSearch removed
                 if (elements.splitterType) elements.splitterType.value = defaultConfig.splitterType;
                 if (elements.chunkSize) elements.chunkSize.value = defaultConfig.chunkSize;
                 if (elements.chunkOverlap) elements.chunkOverlap.value = defaultConfig.chunkOverlap;
 
                 // Web Scraping
                 if (elements.enableWebSearch) elements.enableWebSearch.checked = defaultConfig.enableWebSearch;
-                if (elements.webSearchEngine) elements.webSearchEngine.value = defaultConfig.webSearchEngine;
-                if (elements.searchResultCount) elements.searchResultCount.value = defaultConfig.searchResultCount;
+                // webSearchEngine removed
+                if (elements.depthLevel) elements.depthLevel.value = defaultConfig.depthLevel; // Renamed
                 if (elements.concurrentRequests) elements.concurrentRequests.value = defaultConfig.concurrentRequests;
                 if (elements.bypassSslVerification) elements.bypassSslVerification.checked = defaultConfig.bypassSslVerification;
-                if (elements.youtubeLanguage) elements.youtubeLanguage.value = defaultConfig.youtubeLanguage;
+                // youtubeLanguage removed
                 
                 showToast('Configuración restablecida a los valores predeterminados.', false);
             }
@@ -685,19 +716,21 @@
             elements.saveButton.addEventListener('click', saveConfiguration);
             elements.resetButton.addEventListener('click', resetToDefaults);
 
-            elements.modelWhitelistingToggle.addEventListener('change', renderModelWhitelist);
-            elements.addModelToWhitelistButton.addEventListener('click', () => {
+            // Model Whitelisting event listeners (now in Modelos panel)
+            if (elements.modelWhitelistingToggle) elements.modelWhitelistingToggle.addEventListener('change', renderModelWhitelist);
+            if (elements.addModelToWhitelistButton) elements.addModelToWhitelistButton.addEventListener('click', () => {
                 elements.addModelModal.classList.remove('hidden'); // Show modal
                 elements.newModelInput.focus(); // Focus input field
             });
-            elements.cancelAddModelButton.addEventListener('click', () => {
+            if (elements.cancelAddModelButton) elements.cancelAddModelButton.addEventListener('click', () => {
                 elements.addModelModal.classList.add('hidden'); // Hide modal
                 elements.newModelInput.value = ''; // Clear input
             });
-            elements.confirmAddModelButton.addEventListener('click', addModelToWhitelist);
+            if (elements.confirmAddModelButton) elements.confirmAddModelButton.addEventListener('click', addModelToWhitelist);
 
             elements.navButtons.general.addEventListener('click', (e) => { e.preventDefault(); activatePanel('general'); });
             elements.navButtons.usuarios.addEventListener('click', (e) => { e.preventDefault(); activatePanel('usuarios'); });
+            elements.navButtons.modelos.addEventListener('click', (e) => { e.preventDefault(); activatePanel('modelos'); }); // New event listener
             elements.navButtons.ingesta.addEventListener('click', (e) => { e.preventDefault(); activatePanel('ingesta'); });
             elements.navButtons.webScraping.addEventListener('click', (e) => { e.preventDefault(); activatePanel('webScraping'); });
 
