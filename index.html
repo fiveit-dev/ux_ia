@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - TutorIA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #1a1a1a; /* Dark background */
+            color: #e0e0e0; /* Light text for contrast */
+            font-family: 'Inter', sans-serif;
+        }
+        .form-label {
+            display: block;
+            font-size: 0.875rem; /* text-sm */
+            font-weight: 500; /* font-medium */
+            color: #d1d5db; /* gray-300 */
+            margin-bottom: 0.25rem; /* mb-1 */
+        }
+        .form-input, .form-select, .form-textarea {
+            display: block;
+            width: 100%;
+            padding: 0.5rem 0.75rem; /* px-3 py-2 */
+            background-color: #374151; /* gray-700 */
+            border: 1px solid #4b5563; /* border border-gray-600 */
+            border-radius: 0.375rem; /* rounded-md */
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+            color: #ffffff; /* text-white */
+            outline: none; /* focus:outline-none */
+            transition: all 200ms ease-in-out; /* transition-all duration-200 */
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: #3b82f6; /* focus:border-blue-500 */
+            box-shadow: 0 0 0 1px #3b82f6; /* focus:ring-1 focus:ring-blue-500 */
+        }
+        .form-checkbox {
+            height: 1rem; /* h-4 */
+            width: 1rem; /* w-4 */
+            color: #3b82f6; /* text-blue-500 */
+            border-color: #4b5563; /* border-gray-600 */
+            border-radius: 0.25rem; /* rounded */
+            background-color: #374151; /* bg-gray-700 */
+            outline: none; /* focus:outline-none */
+        }
+        .form-checkbox:focus {
+            box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.5); /* focus:ring-blue-500 */
+        }
+        .help-text {
+            margin-top: 0.125rem; /* mt-0.5 */
+            font-size: 0.75rem; /* text-xs */
+            color: #9ca3af; /* gray-400 */
+            opacity: 0.8; /* opacity-80 */
+        }
+        .card {
+            background-color: #374151; /* bg-gray-800 */
+            padding: 1.5rem; /* p-6 */
+            border-radius: 0.5rem; /* rounded-lg */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg */
+            transition: box-shadow 300ms ease-in-out; /* transition-shadow duration-300 */
+            border: 1px solid #4b5563; /* border border-gray-700 */
+        }
+        .card:hover {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); /* hover:shadow-xl */
+        }
+        .btn {
+            padding: 0.5rem 1rem; /* px-4 py-2 */
+            border-width: 1px; /* border */
+            border-radius: 0.375rem; /* rounded-md */
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+            font-size: 0.875rem; /* text-sm */
+            font-weight: 500; /* font-medium */
+            outline: none; /* focus:outline-none */
+        }
+        .btn:focus {
+            box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.5), 0 0 0 4px rgba(0, 0, 0, 0.5); /* focus:ring-2 focus:ring-offset-2 */
+        }
+        .btn-primary {
+            border-color: transparent; /* border-transparent */
+            color: #ffffff; /* text-white */
+            background-color: #2563eb; /* bg-blue-600 */
+        }
+        .btn-primary:hover {
+            background-color: #1d4ed8; /* hover:bg-blue-700 */
+        }
+        .btn-primary:focus {
+            box-shadow: 0 0 0 2px #3b82f6, 0 0 0 4px #1f2937; /* focus:ring-blue-500 focus:ring-offset-gray-800 */
+        }
+        .btn-secondary {
+            border-color: #4b5563; /* border-gray-600 */
+            color: #d1d5db; /* text-gray-300 */
+            background-color: #374151; /* bg-gray-700 */
+        }
+        .btn-secondary:hover {
+            background-color: #4b5563; /* hover:bg-gray-600 */
+        }
+        .btn-secondary:focus {
+            box-shadow: 0 0 0 2px #6366f1, 0 0 0 4px #1f2937; /* focus:ring-indigo-500 focus:ring-offset-gray-800 */
+        }
+        .slider-track {
+            -webkit-appearance: none;
+            width: 100%; /* w-full */
+            height: 0.5rem; /* h-2 */
+            background-color: #4b5563; /* bg-gray-600 */
+            border-radius: 0.5rem; /* rounded-lg */
+        }
+        .slider-thumb {
+            -webkit-appearance: none;
+            width: 1.25rem; /* w-5 */
+            height: 1.25rem; /* h-5 */
+            background-color: #2563eb; /* bg-blue-600 */
+            border-radius: 9999px; /* rounded-full */
+            cursor: pointer;
+        }
+        /* Custom scrollbar for dark theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #2d2d2d;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #777;
+        }
+        .sidebar-nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem; /* p-2 */
+            border-radius: 0.375rem; /* rounded-md */
+            transition: background-color 200ms ease-in-out, color 200ms ease-in-out; /* transition-colors duration-200 */
+        }
+        .sidebar-nav-item.active {
+            background-color: #4b5563; /* bg-gray-700 */
+            color: #ffffff; /* text-white */
+        }
+        .sidebar-nav-item:not(.active) {
+            color: #9ca3af; /* text-gray-400 */
+        }
+        .sidebar-nav-item:not(.active):hover {
+            background-color: #4b5563; /* hover:bg-gray-700 */
+            color: #ffffff; /* hover:text-white */
+        }
+        .content-panel {
+            display: none;
+        }
+        .content-panel.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="text-gray-200 flex min-h-screen flex-col">
+
+    <div id="toast" class="fixed top-5 right-5 bg-green-600 text-white py-2 px-4 rounded-lg shadow-md opacity-0 invisible transition-all duration-500 z-50">
+        <p id="toast-message"></p>
+    </div>
+
+    <!-- Modal for Add Model -->
+    <div id="add-model-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 hidden">
+        <div class="bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-md border border-gray-700">
+            <h3 class="text-xl font-semibold text-white mb-4">Añadir Nuevo Modelo</h3>
+            <input type="text" id="new-model-input" class="form-input mb-4" placeholder="Nombre del modelo">
+            <div class="flex justify-end space-x-4">
+                <button id="cancel-add-model" class="btn btn-secondary">Cancelar</button>
+                <button id="confirm-add-model" class="btn btn-primary">Añadir</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel Header -->
+    <header class="bg-gray-900 p-4 shadow-md">
+        <div class="container mx-auto flex items-center justify-between">
+            <h1 class="text-2xl font-bold text-gray-100">Admin Panel</h1>
+            <div class="flex space-x-4">
+                <!-- Changed "Dashboard" to "Administración de Usuarios" and removed border classes -->
+                <button class="text-gray-400 hover:text-white font-semibold">Administración de Usuarios</button>
+                <!-- Removed border classes from "Settings" button -->
+                <button class="text-white font-semibold">Settings</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <div class="flex-grow flex flex-col p-0 w-full h-full">
+        
+        <div class="flex flex-grow bg-gray-800 shadow-lg border border-gray-700 overflow-hidden w-full">
+            <!-- Internal Sidebar Navigation -->
+            <aside class="w-56 bg-gray-900 text-gray-300 p-4 flex flex-col flex-shrink-0">
+                <nav class="flex-grow">
+                    <ul>
+                        <li class="mb-2">
+                            <a href="#" id="nav-general" class="sidebar-nav-item active">
+                                <span class="mr-3">⚙️</span> General
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="#" id="nav-usuarios" class="sidebar-nav-item">
+                                <span class="mr-3">👥</span> Usuarios
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="#" id="nav-ingesta" class="sidebar-nav-item">
+                                <span class="mr-3">📥</span> Ingesta
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="#" id="nav-web-scraping" class="sidebar-nav-item">
+                                <span class="mr-3">🌐</span> Web Scraping
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Content Panels Container -->
+            <main class="flex-grow p-6 overflow-y-auto pb-20"> <!-- Added pb-20 for fixed buttons -->
+                <!-- General Panel -->
+                <div id="panel-general" class="content-panel active">
+                    <h3 class="text-xl font-semibold mb-4 border-b border-gray-700 pb-2 text-blue-400 font-bold">🤖 Configuración General</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <label for="enable-signups" class="form-label mb-0">Habilitar Nuevos Registros</label>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="enable-signups" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                        <div>
+                            <label for="default-user-role" class="form-label">Rol de Usuario por Defecto</label>
+                            <select id="default-user-role" class="form-select">
+                                <option>pending</option>
+                                <option>user</option>
+                                <option>admin</option>
+                            </select>
+                            <p class="help-text">Define el rol asignado a los nuevos usuarios registrados.</p>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <label for="show-admin-details" class="form-label mb-0">Mostrar Detalles de Admin en Superposición Pendiente</label>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="show-admin-details" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <label for="enable-community-sharing" class="form-label mb-0">Habilitar Compartir en Comunidad</label>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="enable-community-sharing" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                        <div>
+                            <label for="jwt-expiration" class="form-label">Expiración JWT</label>
+                            <input type="number" id="jwt-expiration" value="-1" class="form-input" placeholder="-1">
+                            <p class="help-text">Unidades de tiempo válidas: 's' (segundos), 'm' (minutos), 'h' (horas), 'd' (días), 'w' (semanas) o '-1' para sin expiración.</p>
+                        </div>
+                        <div>
+                            <label for="webhook-url" class="form-label">URL de Webhook</label>
+                            <input type="url" id="webhook-url" class="form-input" placeholder="https://example.com/webhook">
+                            <p class="help-text">URL para enviar notificaciones automáticas.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Usuarios Panel -->
+                <div id="panel-usuarios" class="content-panel">
+                    <h3 class="text-xl font-semibold mb-4 border-b border-gray-700 pb-2 text-blue-400 font-bold">👥 Permisos de Usuario y Modelos</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <label for="allow-chat-deletion" class="form-label mb-0">Permitir Eliminación de Chat</label>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="allow-chat-deletion" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                        <h4 class="text-lg font-medium text-gray-300 mt-6 mb-2 font-bold">Gestionar Modelos</h4>
+                        <div>
+                            <label for="default-model" class="form-label">Modelo por Defecto</label>
+                            <select id="default-model" class="form-select">
+                                <option>Selecciona un modelo</option>
+                                <option>gpt-3.5-turbo</option>
+                                <option>gpt-4o</option>
+                                <option>City Weather</option>
+                                <!-- Add more models dynamically if needed -->
+                            </select>
+                            <p class="help-text">Modelo de IA predeterminado para nuevas interacciones.</p>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between">
+                                <label for="model-whitelisting-toggle" class="form-label mb-0">Lista Blanca de Modelos</label>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="model-whitelisting-toggle" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                                    </label>
+                            </div>
+                            <div id="model-whitelist-container" class="space-y-2 p-4 bg-gray-700 rounded-md">
+                                <!-- Model whitelist items will be added here by JS -->
+                            </div>
+                            <button id="add-model-to-whitelist" class="btn btn-secondary mt-2">Añadir Modelo</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ingesta Panel -->
+                <div id="panel-ingesta" class="content-panel">
+                    <h3 class="text-xl font-semibold mb-4 border-b border-gray-700 pb-2 text-blue-400 font-bold">📥 Configuración de Ingesta y Búsqueda</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <section id="qdrant-config-ingesta" class="space-y-4">
+                            <h4 class="text-lg font-medium text-gray-300 font-bold">Qdrant (Base de Datos Vectorial)</h4>
+                            <div>
+                                <label for="optimization-scenario" class="form-label">Escenario de Optimización</label>
+                                <select id="optimization-scenario" class="form-select">
+                                    <option>Balanced</option>
+                                    <option>High Precision</option>
+                                    <option>High Recall</option>
+                                </select>
+                                <p class="help-text">Define el equilibrio entre velocidad y precisión de la búsqueda.</p>
+                            </div>
+                            <div>
+                                <label for="hnsw-ef" class="form-label">Número de Vecinos (hnsw_ef)</label>
+                                <input type="number" id="hnsw-ef" value="200" class="form-input" placeholder="ej. 100-500">
+                                <p class="help-text">Controla la profundidad de la búsqueda en el grafo HNSW.</p>
+                            </div>
+                            <div>
+                                <label for="retrieve-fragments" class="form-label">Fragmentos a Recuperar (k)</label>
+                                <input type="number" id="retrieve-fragments" value="5" class="form-input" placeholder="ej. 1-10">
+                                <p class="help-text">Cantidad de fragmentos de documentos más relevantes a recuperar.</p>
+                            </div>
+                            <div class="flex items-center pt-2">
+                                <input id="exact-search" type="checkbox" class="form-checkbox">
+                                <label for="exact-search" class="ml-2 block text-sm text-gray-300">Habilitar Búsqueda Exacta</label>
+                            </div>
+                            <p class="help-text -mt-3">Si está marcada, la búsqueda será más precisa pero potencialmente más lenta.</p>
+                        </section>
+
+                        <section id="splitter-config-ingesta" class="space-y-4">
+                            <h4 class="text-lg font-medium text-gray-300 font-bold">División de Texto (Splitter)</h4>
+                            <div>
+                                <label for="splitter-type" class="form-label">Tipo de Divisor</label>
+                                <select id="splitter-type" class="form-select">
+                                    <option>TokenTextSplitter</option>
+                                    <option>RecursiveCharacterTextSplitter</option>
+                                </select>
+                                <p class="help-text">Método para dividir el texto en fragmentos (chunks).</p>
+                            </div>
+                            <div>
+                                <label for="chunk-size" class="form-label">Tamaño del Fragmento (Tokens)</label>
+                                <input type="number" id="chunk-size" value="1024" class="form-input">
+                                <p class="help-text">Número máximo de tokens por fragmento.</p>
+                            </div>
+                            <div>
+                                <label for="chunk-overlap" class="form-label">Solapamiento (Tokens)</label>
+                                <input type="number" id="chunk-overlap" value="200" class="form-input">
+                                <p class="help-text">Tokens que se solapan entre fragmentos para mantener contexto.</p>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+
+                <!-- Web Scraping Panel -->
+                <div id="panel-web-scraping" class="content-panel">
+                    <h3 class="text-xl font-semibold mb-4 border-b border-gray-700 pb-2 text-blue-400 font-bold">🌐 Configuración de Web Scraping</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <label for="enable-web-search" class="form-label mb-0">Habilitar Búsqueda Web</label>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="enable-web-search" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                        <div>
+                            <label for="web-search-engine" class="form-label">Motor de Búsqueda Web</label>
+                            <select id="web-search-engine" class="form-select">
+                                <option>duckduckgo</option>
+                                <option>google</option>
+                                <option>bing</option>
+                            </select>
+                            <p class="help-text">Selecciona el motor de búsqueda a utilizar para el scraping web.</p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="search-result-count" class="form-label">Conteo de Resultados de Búsqueda</label>
+                                <input type="number" id="search-result-count" value="3" class="form-input">
+                                <p class="help-text">Número de resultados a recuperar por búsqueda.</p>
+                            </div>
+                            <div>
+                                <label for="concurrent-requests" class="form-label">Solicitudes Concurrentes</label>
+                                <input type="number" id="concurrent-requests" value="10" class="form-input">
+                                <p class="help-text">Número de solicitudes web simultáneas.</p>
+                            </div>
+                        </div>
+                        <h4 class="text-lg font-medium text-gray-300 mt-6 mb-2 font-bold">Configuración del Cargador Web</h4>
+                        <div class="flex items-center justify-between">
+                            <label for="bypass-ssl-verification" class="form-label mb-0">Omitir verificación SSL para Sitios Web</label>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="bypass-ssl-verification" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                        <h4 class="text-lg font-medium text-gray-300 mt-6 mb-2 font-bold">Configuración del Cargador de YouTube</h4>
+                        <div>
+                            <label for="youtube-language" class="form-label">Idioma</label>
+                            <input type="text" id="youtube-language" value="en" class="form-input">
+                            <p class="help-text">Idioma para la carga de contenido de YouTube (ej. 'es', 'en').</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fixed Save/Reset Buttons -->
+                <div class="fixed bottom-4 right-4 p-4 bg-gray-800 rounded-lg shadow-xl z-40 flex space-x-4">
+                    <button id="reset-button" class="btn btn-secondary">Restablecer</button>
+                    <button id="save-button" class="btn btn-primary">Guardar Cambios</button>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const elements = {
+                // General
+                enableSignups: document.getElementById('enable-signups'),
+                defaultUserRole: document.getElementById('default-user-role'),
+                showAdminDetails: document.getElementById('show-admin-details'),
+                enableCommunitySharing: document.getElementById('enable-community-sharing'),
+                jwtExpiration: document.getElementById('jwt-expiration'),
+                webhookUrl: document.getElementById('webhook-url'),
+
+                // Usuarios
+                allowChatDeletion: document.getElementById('allow-chat-deletion'),
+                defaultModel: document.getElementById('default-model'),
+                modelWhitelistingToggle: document.getElementById('model-whitelisting-toggle'),
+                modelWhitelistContainer: document.getElementById('model-whitelist-container'),
+                addModelToWhitelistButton: document.getElementById('add-model-to-whitelist'),
+                addModelModal: document.getElementById('add-model-modal'),
+                newModelInput: document.getElementById('new-model-input'),
+                cancelAddModelButton: document.getElementById('cancel-add-model'),
+                confirmAddModelButton: document.getElementById('confirm-add-model'),
+
+                // Ingesta
+                optimizationScenario: document.getElementById('optimization-scenario'),
+                hnswEf: document.getElementById('hnsw-ef'),
+                retrieveFragments: document.getElementById('retrieve-fragments'),
+                exactSearch: document.getElementById('exact-search'),
+                splitterType: document.getElementById('splitter-type'),
+                chunkSize: document.getElementById('chunk-size'),
+                chunkOverlap: document.getElementById('chunk-overlap'),
+
+                // Web Scraping
+                enableWebSearch: document.getElementById('enable-web-search'),
+                webSearchEngine: document.getElementById('web-search-engine'),
+                searchResultCount: document.getElementById('search-result-count'),
+                concurrentRequests: document.getElementById('concurrent-requests'),
+                bypassSslVerification: document.getElementById('bypass-ssl-verification'),
+                youtubeLanguage: document.getElementById('youtube-language'),
+                // depthLevel, depthAlert, parallelismLevel are intentionally removed as they were not in the provided image.
+
+                // Global
+                saveButton: document.getElementById('save-button'),
+                resetButton: document.getElementById('reset-button'),
+                toast: document.getElementById('toast'),
+                toastMessage: document.getElementById('toast-message'),
+
+                // Navigation
+                navButtons: {
+                    general: document.getElementById('nav-general'),
+                    usuarios: document.getElementById('nav-usuarios'),
+                    ingesta: document.getElementById('nav-ingesta'),
+                    webScraping: document.getElementById('nav-web-scraping'),
+                },
+                contentPanels: {
+                    general: document.getElementById('panel-general'),
+                    usuarios: document.getElementById('panel-usuarios'),
+                    ingesta: document.getElementById('panel-ingesta'),
+                    webScraping: document.getElementById('panel-web-scraping'),
+                }
+            };
+
+            // Log all elements to check if any are null
+            console.log('Verificando elementos HTML:');
+            for (const key in elements) {
+                if (elements.hasOwnProperty(key)) {
+                    if (typeof elements[key] === 'object' && elements[key] !== null && !Array.isArray(elements[key])) {
+                        // For nested objects like navButtons or contentPanels
+                        for (const subKey in elements[key]) {
+                            if (elements[key].hasOwnProperty(subKey)) {
+                                console.log(`  elements.${key}.${subKey}:`, elements[key][subKey]);
+                            }
+                        }
+                    } else {
+                        console.log(`  elements.${key}:`, elements[key]);
+                    }
+                }
+            }
+
+            const defaultConfig = {
+                // General
+                enableSignups: true,
+                defaultUserRole: 'pending',
+                showAdminDetails: true,
+                enableCommunitySharing: true,
+                jwtExpiration: -1,
+                webhookUrl: 'https://example.com/webhook',
+
+                // Usuarios
+                allowChatDeletion: true,
+                defaultModel: 'gpt-3.5-turbo',
+                modelWhitelisting: ['gpt-3.5-turbo', 'gpt-4o', 'City Weather'], // Example models
+                
+                // Ingesta
+                optimizationScenario: 'Balanced',
+                hnswEf: 200,
+                retrieveFragments: 5,
+                exactSearch: false,
+                splitterType: 'TokenTextSplitter',
+                chunkSize: 1024,
+                chunkOverlap: 200,
+
+                // Web Scraping
+                enableWebSearch: true,
+                webSearchEngine: 'duckduckgo',
+                searchResultCount: 3,
+                concurrentRequests: 10,
+                bypassSslVerification: true,
+                youtubeLanguage: 'en',
+            };
+
+            let currentModelWhitelist = [...defaultConfig.modelWhitelisting];
+
+            function showToast(message, isError = false) {
+                elements.toastMessage.textContent = message;
+                elements.toast.classList.remove('bg-green-600', 'bg-red-600');
+                elements.toast.classList.add(isError ? 'bg-red-600' : 'bg-green-600');
+                elements.toast.classList.remove('invisible', 'opacity-0');
+                
+                setTimeout(() => {
+                    elements.toast.classList.add('invisible', 'opacity-0');
+                }, 3000);
+            }
+
+            function renderModelWhitelist() {
+                elements.modelWhitelistContainer.innerHTML = '';
+                if (elements.modelWhitelistingToggle.checked) {
+                    currentModelWhitelist.forEach((model) => {
+                        const div = document.createElement('div');
+                        div.className = 'flex items-center justify-between bg-gray-600 p-2 rounded-md';
+                        div.innerHTML = `
+                            <span class="text-sm">${model}</span>
+                            <button data-model="${model}" class="remove-model-btn text-red-400 hover:text-red-600 transition-colors duration-200">
+                                &times;
+                            </button>
+                        `;
+                        elements.modelWhitelistContainer.appendChild(div);
+                    });
+                }
+            }
+
+            function addModelToWhitelist() {
+                const newModel = elements.newModelInput.value.trim();
+                if (newModel && !currentModelWhitelist.includes(newModel)) {
+                    currentModelWhitelist.push(newModel);
+                    renderModelWhitelist();
+                    elements.newModelInput.value = ''; // Clear input
+                    elements.addModelModal.classList.add('hidden'); // Hide modal
+                } else if (newModel) {
+                    showToast('El modelo ya existe en la lista.', true);
+                }
+            }
+
+            function removeModelFromWhitelist(event) {
+                const modelToRemove = event.target.dataset.model;
+                currentModelWhitelist = currentModelWhitelist.filter(model => model !== modelToRemove);
+                renderModelWhitelist();
+            }
+
+            function saveConfiguration() {
+                const currentConfig = {
+                    // General
+                    enableSignups: elements.enableSignups.checked,
+                    defaultUserRole: elements.defaultUserRole.value,
+                    showAdminDetails: elements.showAdminDetails.checked,
+                    enableCommunitySharing: elements.enableCommunitySharing.checked,
+                    jwtExpiration: parseInt(elements.jwtExpiration.value, 10),
+                    webhookUrl: elements.webhookUrl.value,
+
+                    // Usuarios
+                    allowChatDeletion: elements.allowChatDeletion.checked,
+                    defaultModel: elements.defaultModel.value,
+                    modelWhitelisting: elements.modelWhitelistingToggle.checked ? currentModelWhitelist : [],
+                    
+                    // Ingesta
+                    optimizationScenario: elements.optimizationScenario.value,
+                    hnswEf: parseInt(elements.hnswEf.value, 10),
+                    retrieveFragments: parseInt(elements.retrieveFragments.value, 10),
+                    exactSearch: elements.exactSearch.checked,
+                    splitterType: elements.splitterType.value,
+                    chunkSize: parseInt(elements.chunkSize.value, 10),
+                    chunkOverlap: parseInt(elements.chunkOverlap.value, 10),
+
+                    // Web Scraping
+                    enableWebSearch: elements.enableWebSearch.checked,
+                    webSearchEngine: elements.webSearchEngine.value,
+                    searchResultCount: parseInt(elements.searchResultCount.value, 10),
+                    concurrentRequests: parseInt(elements.concurrentRequests.value, 10),
+                    bypassSslVerification: elements.bypassSslVerification.checked,
+                    youtubeLanguage: elements.youtubeLanguage.value,
+                };
+                
+                console.log('Guardando configuración:', currentConfig);
+                showToast('Configuración guardada exitosamente.');
+            }
+
+            function resetToDefaults() {
+                // General
+                if (elements.enableSignups) elements.enableSignups.checked = defaultConfig.enableSignups;
+                if (elements.defaultUserRole) elements.defaultUserRole.value = defaultConfig.defaultUserRole;
+                if (elements.showAdminDetails) elements.showAdminDetails.checked = defaultConfig.showAdminDetails;
+                if (elements.enableCommunitySharing) elements.enableCommunitySharing.checked = defaultConfig.enableCommunitySharing;
+                if (elements.jwtExpiration) elements.jwtExpiration.value = defaultConfig.jwtExpiration;
+                if (elements.webhookUrl) elements.webhookUrl.value = defaultConfig.webhookUrl;
+
+                // Usuarios
+                if (elements.allowChatDeletion) elements.allowChatDeletion.checked = defaultConfig.allowChatDeletion;
+                if (elements.defaultModel) elements.defaultModel.value = defaultConfig.defaultModel;
+                if (elements.modelWhitelistingToggle) elements.modelWhitelistingToggle.checked = true; // Assume whitelisting is enabled by default
+                currentModelWhitelist = [...defaultConfig.modelWhitelisting];
+                renderModelWhitelist(); // Re-render whitelist after reset
+                
+                // Ingesta
+                if (elements.optimizationScenario) elements.optimizationScenario.value = defaultConfig.optimizationScenario;
+                if (elements.hnswEf) elements.hnswEf.value = defaultConfig.hnswEf;
+                if (elements.retrieveFragments) elements.retrieveFragments.value = defaultConfig.retrieveFragments;
+                if (elements.exactSearch) elements.exactSearch.checked = defaultConfig.exactSearch;
+                if (elements.splitterType) elements.splitterType.value = defaultConfig.splitterType;
+                if (elements.chunkSize) elements.chunkSize.value = defaultConfig.chunkSize;
+                if (elements.chunkOverlap) elements.chunkOverlap.value = defaultConfig.chunkOverlap;
+
+                // Web Scraping
+                if (elements.enableWebSearch) elements.enableWebSearch.checked = defaultConfig.enableWebSearch;
+                if (elements.webSearchEngine) elements.webSearchEngine.value = defaultConfig.webSearchEngine;
+                if (elements.searchResultCount) elements.searchResultCount.value = defaultConfig.searchResultCount;
+                if (elements.concurrentRequests) elements.concurrentRequests.value = defaultConfig.concurrentRequests;
+                if (elements.bypassSslVerification) elements.bypassSslVerification.checked = defaultConfig.bypassSslVerification;
+                if (elements.youtubeLanguage) elements.youtubeLanguage.value = defaultConfig.youtubeLanguage;
+                
+                showToast('Configuración restablecida a los valores predeterminados.', false);
+            }
+
+            function activatePanel(panelName) {
+                console.log('Activando panel:', panelName); // Debugging log
+
+                // Remove 'active' class from all navigation buttons
+                for (const key in elements.navButtons) {
+                    if (elements.navButtons.hasOwnProperty(key)) {
+                        elements.navButtons[key].classList.remove('active');
+                    }
+                }
+
+                // Hide all content panels
+                for (const key in elements.contentPanels) {
+                    if (elements.contentPanels.hasOwnProperty(key)) {
+                        elements.contentPanels[key].classList.remove('active');
+                    }
+                }
+
+                // Add 'active' class to the selected navigation button
+                if (elements.navButtons[panelName]) {
+                    elements.navButtons[panelName].classList.add('active');
+                } else {
+                    console.error('Botón de navegación no encontrado para el panel:', panelName);
+                }
+
+                // Show the selected content panel
+                if (elements.contentPanels[panelName]) {
+                    elements.contentPanels[panelName].classList.add('active');
+                } else {
+                    console.error('Panel de contenido no encontrado para el panel:', panelName);
+                }
+            }
+
+            // Event Listeners
+            elements.saveButton.addEventListener('click', saveConfiguration);
+            elements.resetButton.addEventListener('click', resetToDefaults);
+
+            elements.modelWhitelistingToggle.addEventListener('change', renderModelWhitelist);
+            elements.addModelToWhitelistButton.addEventListener('click', () => {
+                elements.addModelModal.classList.remove('hidden'); // Show modal
+                elements.newModelInput.focus(); // Focus input field
+            });
+            elements.cancelAddModelButton.addEventListener('click', () => {
+                elements.addModelModal.classList.add('hidden'); // Hide modal
+                elements.newModelInput.value = ''; // Clear input
+            });
+            elements.confirmAddModelButton.addEventListener('click', addModelToWhitelist);
+
+            elements.navButtons.general.addEventListener('click', (e) => { e.preventDefault(); activatePanel('general'); });
+            elements.navButtons.usuarios.addEventListener('click', (e) => { e.preventDefault(); activatePanel('usuarios'); });
+            elements.navButtons.ingesta.addEventListener('click', (e) => { e.preventDefault(); activatePanel('ingesta'); });
+            elements.navButtons.webScraping.addEventListener('click', (e) => { e.preventDefault(); activatePanel('webScraping'); });
+
+            // Initial setup
+            resetToDefaults();
+            activatePanel('general'); // Activate the 'General' panel by default
+            showToast('Valores predeterminados cargados.', false);
+        });
+    </script>
+
+</body>
+</html>
