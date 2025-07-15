@@ -248,6 +248,39 @@
             opacity: 0.5;
             text-decoration: line-through;
         }
+
+        
+        /* Styles for the modal */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.75);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+        }
+        .modal-content {
+            background-color: #374151;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 48rem; /* Equivalent to max-w-2xl */
+            border: 1px solid #4b5563;
+        }
+        .form-textarea {
+            display: block;
+            width: 100%;
+            padding: 0.5rem 0.75rem; /* px-3 py-2 */
+            background-color: #1f252f; /* gray-700 */
+            border: 1px solid #4b5563; /* border border-gray-600 */
+            border-radius: 0.375rem; /* rounded-md */
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+            color: #ffffff; /* text-white */
+            outline: none; /* focus:outline-none */
+            transition: all 200ms ease-in-out; /* transition-all duration-200 */
+        }
     </style>
 </head>
 <body class="text-gray-200 flex min-h-screen flex-col">
@@ -316,6 +349,18 @@
             <div class="flex justify-end space-x-4 mt-6">
                 <button id="cancel-add-document" class="btn btn-secondary">Cancelar</button>
                 <button id="confirm-add-document" class="btn btn-primary">Agregar Documento</button>
+            </div>
+        </div>
+    </div>
+
+	<!-- NEW: Modal for Scrape Results -->
+    <div id="scrape-results-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3 class="text-xl font-semibold text-white mb-4">Resultados del Scrapeo</h3>
+            <textarea id="scrape-results-content" class="form-textarea h-64 mb-4 font-mono text-sm"></textarea>
+            <div class="flex justify-end space-x-4">
+                <button id="cancel-scrape-results" class="btn btn-secondary">Cerrar</button>
+                <button id="save-scrape-results" class="btn btn-primary">Guardar</button>
             </div>
         </div>
     </div>
@@ -410,65 +455,78 @@
                     <!-- Document Management Content Panels -->
                     <div class="flex-grow px-6" style="overflow: auto;">
                         <!-- Carga de Documentos Panel -->
-                        <div id="doc-panel-upload" class="content-panel active">
-                            <div class="flex justify-between items-center mb-4">
-                                <h4 class="text-lg font-medium text-gray-300 font-bold">📚 Documentos Cargados</h4>
-                                <div class="flex space-x-2">
-                                    <button id="toggle-selection-mode-btn" class="btn btn-secondary px-3 py-1 text-sm flex items-center space-x-1">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                        <span>Seleccionar Documentos</span>
-                                    </button>
-                                    <button id="apply-changes-btn" class="btn btn-primary px-3 py-1 text-sm flex items-center space-x-1 hidden">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                        </svg>
-                                        <span>Aplicar Cambios</span>
-                                    </button>
-                                    <button id="add-new-document-btn" class="btn btn-primary px-3 py-1 text-sm flex items-center space-x-1">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                                        </svg>
-                                        <span>Agregar</span>
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <!-- Filter and Document List -->
-                            <div class="mb-4">
-                                <input type="text" id="document-filter-input" class="form-input w-full" placeholder="Filtrar documentos...">
-                            </div>
-                            <div id="loaded-documents-list" class="space-y-4">
-                                <!-- Loaded documents will be rendered here by JS -->
-                            </div>
-                        </div>
-
+						<div id="doc-panel-upload" class="content-panel active">
+							<div class="flex justify-between items-center mb-4">
+								<h4 class="text-lg font-medium text-gray-300 font-bold">📚 Documentos Cargados</h4>
+								<div class="flex space-x-2">
+									<button id="toggle-selection-mode-btn" class="btn btn-secondary px-3 py-1 text-sm flex items-center space-x-1">
+										<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+										</svg>
+										<span>Seleccionar Documentos</span>
+									</button>
+									<button id="apply-changes-btn" class="btn btn-primary px-3 py-1 text-sm flex items-center space-x-1 hidden">
+										<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+										</svg>
+										<span>Cambiar Estados</span>
+									</button>
+									<button id="add-new-document-btn" class="btn btn-primary px-3 py-1 text-sm flex items-center space-x-1">
+										<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+										</svg>
+										<span>Agregar</span>
+									</button>
+								</div>
+							</div>
+							<!-- Filter and Document List -->
+							<div class="mb-4">
+								<input type="text" id="document-filter-input" class="form-input w-full" placeholder="Filtrar documentos...">
+							</div>
+							<div id="loaded-documents-list" class="space-y-4">
+								<!-- Loaded documents will be rendered here by JS -->
+							</div>
+						</div>
+						
                         <!-- Web Scraping Panel (dentro de Gestión de documentos) -->
                         <div id="doc-panel-web-scraping" class="content-panel">
-                            <h4 class="text-lg font-medium text-gray-300 mb-4 font-bold">🕸️ Scrapear Contenido Web</h4>
-                            <div class="space-y-4">
-                                <div>
-                                    <label for="web-scraping-url" class="form-label">URL a Scrapear</label>
-                                    <input type="url" id="web-scraping-url" class="form-input" placeholder="https://www.example.com">
-                                    <p class="help-text">Introduce la URL de la página web que deseas scrapear.</p>
-                                </div>
-                                <div>
-                                    <label for="web-scraping-depth" class="form-label">Profundidad de Scrapeo (Nivel de enlaces)</label>
-                                    <input type="number" id="web-scraping-depth" value="0" min="0" class="form-input">
-                                    <p class="help-text">0 para solo la URL actual, 1 para incluir enlaces de la URL, etc.</p>
-                                </div>
-                                <div class="flex items-center justify-between">
-                                    <label for="include-images" class="form-label mb-0">Incluir Imágenes</label>
-                                    <label class="relative inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" id="include-images" class="sr-only peer">
-                                        <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                                    </label>
-                                </div>
-                                <button id="start-scraping-btn" class="btn btn-primary mt-4 w-full">Iniciar Scrapeo</button>
-                            </div>
-                        </div>
-                    </div>
+							<div class="card">
+								<h4 class="text-xl font-semibold text-white mb-6">Configuración de Web Scraping</h4>
+								<div class="space-y-4">
+									<div>
+										<label for="web-scraping-url" class="form-label">URL a Scrapear</label>
+										<input type="url" id="web-scraping-url" class="form-input" placeholder="Ej: https://www.ejemplo.com">
+										<p class="help-text">Introduce la URL de la página web que deseas scrapear.</p>
+									</div>
+									<div>
+										<label for="web-scraping-depth" class="form-label">Profundidad de Scrapeo (<span id="web-scraping-depth-value">1</span>)</label>
+										<input type="range" id="web-scraping-depth" min="0" max="5" value="1" class="slider-track" oninput="document.getElementById('web-scraping-depth-value').innerText = this.value">
+										<p class="help-text">Define cuántos niveles de enlaces internos se seguirán (0 para solo la URL inicial, 1 para enlaces de la URL inicial, etc.).</p>
+									</div>
+									<div class="flex items-center justify-between">
+										<label for="include-images" class="form-label mb-0">Incluir imágenes en el scrapeo</label>
+										<label class="relative inline-flex items-center cursor-pointer">
+											<input type="checkbox" id="include-images" class="sr-only peer">
+											<div class="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+										</label>
+									</div>
+									<p class="help-text">Marca esta opción para descargar también las imágenes encontradas en las páginas.</p>
+									<div class="flex justify-end mt-6">
+										<button id="start-scraping-btn" class="btn btn-primary px-4 py-2 flex items-center space-x-2">
+											<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+											</svg>
+											<span>Iniciar Scrapeo</span>
+										</button>
+									</div>
+									<!-- Area de Estado y Resultados -->
+									<div id="scraping-status-area" class="mt-4 p-3 bg-gray-700 rounded-md text-sm text-gray-300">
+										<!-- Initial text removed -->
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
                 </div>
 
                 <!-- Panel de Chatear con Bot -->
@@ -704,7 +762,7 @@
                 </div>
 
                 <!-- Fixed Save/Reset Buttons -->
-                <div class="fixed bottom-4 right-4 p-4 bg-gray-800 rounded-lg shadow-xl z-40 flex space-x-4">
+                <div id="config-button-panel" class="fixed bottom-4 right-4 p-4 bg-gray-800 rounded-lg shadow-xl z-40 flex space-x-4">
                     <button id="reset-button" class="btn btn-secondary">Restablecer</button>
                     <button id="save-button" class="btn btn-primary">Guardar Cambios</button>
                 </div>
@@ -798,19 +856,19 @@
                 chunkSize: document.getElementById('chunk-size'),
                 chunkOverlap: document.getElementById('chunk-overlap'),
 
-                // Web Scraping fields (existing)
-                enableWebSearch: document.getElementById('enable-web-search'),
-                webSearchEngine: document.getElementById('web-search-engine'),
-                searchResultCount: document.getElementById('search-result-count'),
-                concurrentRequests: document.getElementById('concurrent-requests'),
-                bypassSslVerification: document.getElementById('bypass-ssl-verification'),
-                youtubeLanguage: document.getElementById('youtube-language'),
-
-                // NEW: Document Upload and Web Scraping fields
+				// Web Scraping inputs
                 webScrapingUrl: document.getElementById('web-scraping-url'),
                 webScrapingDepth: document.getElementById('web-scraping-depth'),
+                webScrapingDepthValue: document.getElementById('web-scraping-depth-value'),
                 includeImages: document.getElementById('include-images'),
                 startScrapingBtn: document.getElementById('start-scraping-btn'),
+                scrapingStatusArea: document.getElementById('scraping-status-area'),
+
+                // Web Scraping Results Modal
+                scrapeResultsModal: document.getElementById('scrape-results-modal'),
+                scrapeResultsContent: document.getElementById('scrape-results-content'),
+                saveScrapeResultsBtn: document.getElementById('save-scrape-results'),
+                cancelScrapeResultsBtn: document.getElementById('cancel-scrape-results'),
 
                 // NEW: Document List and Add Document Modal elements
                 addNewDocumentBtn: document.getElementById('add-new-document-btn'),
@@ -834,7 +892,8 @@
                 confirmAddDocumentBtn: document.getElementById('confirm-add-document'),
 
 
-                // Global
+                // Globalconfig-button-panel
+                configButtonPanel: document.getElementById('config-button-panel'),
                 saveButton: document.getElementById('save-button'),
                 resetButton: document.getElementById('reset-button'),
                 toast: document.getElementById('toast'),
@@ -902,11 +961,14 @@
             let currentModelWhitelist = [...defaultConfig.modelWhitelisting];
 
             // Mock data for loaded documents
+            
             let loadedDocuments = [
-                { id: 1, name: 'Contrato de Servicio V1.0', description: 'Documento legal que detalla los términos del servicio.', metadata: { tipo: 'legal', version: '1.0' }, status: 'active' },
-                { id: 2, name: 'Manual de Usuario App Móvil', description: 'Guía completa para el uso de la aplicación móvil.', metadata: { categoria: 'manual', plataforma: 'móvil' }, status: 'active' },
-                { id: 3, name: 'Especificaciones Técnicas Proyecto Alpha', description: 'Detalles técnicos del desarrollo del Proyecto Alpha.', metadata: { proyecto: 'Alpha', fase: 'desarrollo' }, status: 'active' },
-                { id: 4, name: 'Políticas de Privacidad Actualizadas', description: 'Revisión y actualización de las políticas de privacidad de la empresa.', metadata: { tipo: 'política', fecha_revision: '2023-06-15' }, status: 'active' },
+                { id: 1, name: 'Documento-finanzas.pdf', active: true, metadata: [{ key: 'tipo', value: 'informe' }, { key: 'fecha', value: '2023-01-15' }] },
+                { id: 2, name: 'Manual-usuario.docx', active: true, metadata: [{ key: 'tipo', value: 'manual' }, { key: 'version', value: '1.0' }] },
+                { id: 3, name: 'FAQs-IA.txt', active: false, metadata: [{ key: 'tipo', value: 'faq' }] },
+                { id: 4, name: 'politicas-privacidad.pdf', active: true, metadata: [{ key: 'tipo', value: 'legal' }, { key: 'region', value: 'EU' }] },
+                { id: 5, name: 'reporte-anual-2022.json', active: true, metadata: [{ key: 'tipo', value: 'reporte' }, { key: 'año', value: '2022' }] },
+                { id: 6, name: 'historial-conversaciones.csv', active: false, metadata: [{ key: 'tipo', value: 'datos' }] },
             ];
 
             // Temporary array to hold metadata for the document being added/edited in the modal
@@ -1091,6 +1153,8 @@
                 // Activate selected main navigation item and content panel
                 let activeNavItem;
                 let activeContentPanel;
+                
+                elements.configButtonPanel.style.display = 'none';
 
                 switch (panelId) {
                     case 'panel-gestion-usuarios':
@@ -1110,6 +1174,7 @@
                     case 'panel-configuracion':
                         activeContentPanel = elements.panelConfiguracion; // No specific nav item in sidebar for this
                         // For settings, ensure general tab is active by default
+                        elements.configButtonPanel.style.display = 'flex';
                         activateSettingsSubPanel('general');
                         break;
                     default:
@@ -1626,7 +1691,7 @@
                 });
             }
 
-            // NEW: Web Scraping action
+            // Web Scraping action
             if (elements.startScrapingBtn) {
                 elements.startScrapingBtn.addEventListener('click', () => {
                     const url = elements.webScrapingUrl.value.trim();
@@ -1634,12 +1699,67 @@
                     const includeImages = elements.includeImages.checked;
 
                     if (url) {
-                        console.log(`Iniciando scrapeo de: ${url}, Profundidad: ${depth}, Incluir imágenes: ${includeImages}`);
-                        // Here you would typically send this information to a backend for scraping
+                        elements.scrapingStatusArea.textContent = `Iniciando scrapeo de "${url}" con profundidad ${depth} y ${includeImages ? 'con' : 'sin'} imágenes...`;
                         showToast(`Iniciando scrapeo de "${url}"...`, false);
+
+                        // Simulate scraping process
+                        setTimeout(() => {
+                            const dummyXml = `<document>\n  <metadata>\n    <url>${url}</url>\n    <tipo>web-scraping</tipo>\n    <profundidad>${depth}</profundidad>\n    <imagenes>${includeImages}</imagenes>\n  </metadata>\n  <content>\n    <title>Título de la Página Scrapeada</title>\n    <paragraph>Este es un párrafo de ejemplo del contenido scrapeado de la URL: ${url}.</paragraph>\n    <paragraph>Aquí podría ir más contenido extraído.</paragraph>\n  </content>\n</document>`;
+                            elements.scrapeResultsContent.value = dummyXml;
+                            elements.scrapeResultsModal.classList.remove('hidden');
+                            elements.scrapingStatusArea.textContent = 'Scrapeo completado. Revisa los resultados.';
+                            showToast('Scrapeo completado. Revisa los resultados.', false);
+                        }, 2000); // Simulate 2-second scraping
                     } else {
                         showToast('Por favor, introduce una URL para iniciar el scrapeo.', true);
+                        elements.scrapingStatusArea.textContent = 'Por favor, introduce una URL para iniciar el scrapeo.';
                     }
+                });
+            }
+
+            // Save Scrape Results
+            if (elements.saveScrapeResultsBtn) {
+                elements.saveScrapeResultsBtn.addEventListener('click', () => {
+                    const scrapedXml = elements.scrapeResultsContent.value;
+                    // In a real application, you would send this XML to your backend to save.
+                    console.log('Guardando resultados del scrapeo:', scrapedXml);
+
+                    // Extract URL from the XML for metadata
+                    const parser = new DOMParser();
+                    const xmlDoc = parser.parseFromString(scrapedXml, "text/xml");
+                    const urlNode = xmlDoc.querySelector('metadata url');
+                    const scrapedUrl = urlNode ? urlNode.textContent : 'URL Desconocida';
+
+                    // Add a new document to the loadedDocuments array
+                    loadedDocuments.push({
+                        id: Date.now() + Math.random(),
+                        name: `Documento Scrapeado`, // Truncate for display,
+                        description: `${scrapedUrl.substring(0, 30)}...`,
+                        metadata: {
+                             tipo: 'web-scraping',
+                             url: scrapedUrl
+                            // You could parse more metadata from the XML here
+                        },
+                        status: 'active', // New documents are active by default
+                    });
+
+                    elements.scrapeResultsModal.classList.add('hidden');
+                    renderLoadedDocuments();
+                    showToast('Resultados del scrapeo guardados y documento añadido.', false);
+                    elements.scrapingStatusArea.textContent = ''; // Clear status after saving
+                    
+                    elements.webScrapingUrl.value = ''; // Clear URL
+                    elements.webScrapingDepth.value = defaultConfig.webScrapingDepth;
+                    elements.includeImages.checked = defaultConfig.includeImages;
+                });
+            }
+
+            // Cancel Scrape Results
+            if (elements.cancelScrapeResultsBtn) {
+                elements.cancelScrapeResultsBtn.addEventListener('click', () => {
+                    elements.scrapeResultsModal.classList.add('hidden');
+                    showToast('Scrapeo cancelado. Los resultados no fueron guardados.', true);
+                    elements.scrapingStatusArea.textContent = ''; // Clear status after cancelling
                 });
             }
 
@@ -1654,6 +1774,11 @@
             activateMainPanel('panel-gestion-documentos-nuevo');
             activateDocSubPanel('upload');
             showToast('Valores predeterminados cargados.', false);
+
+            // Set initial value for depth slider display
+            if (elements.webScrapingDepth && elements.webScrapingDepthValue) {
+                elements.webScrapingDepthValue.innerText = elements.webScrapingDepth.value;
+            }
         });
     </script>
 
