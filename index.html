@@ -281,6 +281,48 @@
             outline: none; /* focus:outline-none */
             transition: all 200ms ease-in-out; /* transition-all duration-200 */
         }
+
+        /* Tooltip styles */
+        .tooltip-container {
+            position: relative;
+            display: inline-block;
+        }
+        .tooltip-content {
+            position: absolute;
+            background-color: #4b5563; /* gray-700 */
+            color: #ffffff;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            z-index: 60;
+            width: 250px; /* Fixed width for readability */
+            left: 100%; /* Position to the right of the icon */
+            margin-left: 10px; /* Small space from the icon */
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+        .tooltip-content.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .scraped-page-item {
+            padding: 0.5rem;
+            cursor: pointer;
+            border-radius: 0.25rem;
+            transition: background-color 200ms ease-in-out;
+        }
+        .scraped-page-item:hover {
+            background-color: #4b5563;
+        }
+        .scraped-page-item.active {
+            background-color: #2563eb;
+            color: #ffffff;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body class="text-gray-200 flex min-h-screen flex-col">
@@ -355,10 +397,51 @@
 
 	<!-- NEW: Modal for Scrape Results -->
     <div id="scrape-results-modal" class="modal hidden">
-        <div class="modal-content">
+        <div class="modal-content flex flex-col h-[80vh] max-w-4xl"> <!-- Changed to flex-col for full width metadata -->
             <h3 class="text-xl font-semibold text-white mb-4">Resultados del Scrapeo</h3>
-            <textarea id="scrape-results-content" class="form-textarea h-64 mb-4 font-mono text-sm"></textarea>
-            <div class="flex justify-end space-x-4">
+            
+            <!-- Metadata section for scraped results (full width) -->
+            <div id="scrape-metadata-section" class="border border-gray-700 p-4 rounded-md mb-4">
+                <h4 class="text-md font-medium text-gray-300 mb-3">Metadata General del Scrapeo</h4>
+                <div class="flex space-x-2 items-center mb-3">
+                    <select id="scrape-metadata-key-select" class="form-select w-full">
+                        <option value="" disabled selected hidden>Seleccionar metadata existente</option>
+                        <option value="new-metadata-key">Agregar nueva...</option>
+                    </select>
+                    <input type="text" id="scrape-new-metadata-key-input" class="form-input w-full hidden" placeholder="Nueva clave de metadata">
+                    
+                    <input type="text" id="scrape-new-metadata-value-input" class="form-input flex-grow" placeholder="Valor de la metadata">
+                    <button id="scrape-add-metadata-btn" class="btn btn-primary px-3 py-2 text-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                    </button>
+                    <button id="scrape-reset-metadata-input-btn" class="btn btn-secondary px-3 py-2 text-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004 12v.622m15.356-2A8.001 8.001 0 0120 12v.622m-2.489 4.414l-2.489 2.489m0 0l-2.489-2.489m2.489 2.489V10" />
+                        </svg>
+                    </button>
+                </div>
+                <div id="scrape-metadata-chips-container" class="mt-4 flex flex-wrap gap-2">
+                    <!-- Metadata chips for scraped page will be added here by JS -->
+                </div>
+            </div>
+            <!-- End Metadata section -->
+
+            <div class="flex flex-grow"> <!-- Two-column layout for pages and content -->
+                <div class="w-1/3 border-r border-gray-700 p-4 overflow-y-auto">
+                    <h3 class="text-lg font-semibold text-white mb-4">Páginas Scrapeadas</h3>
+                    <ul id="scraped-pages-list" class="space-y-2">
+                        <!-- Scraped pages will be listed here by JS -->
+                    </ul>
+                </div>
+                <div class="flex-grow p-4 flex flex-col">
+                    <h3 class="text-xl font-semibold text-white mb-4">Contenido de la Página</h3>
+                    <textarea id="scrape-results-content" class="form-textarea flex-grow mb-4 font-mono text-sm"></textarea>
+                </div>
+            </div>
+
+            <div class="flex justify-end space-x-4 mt-6">
                 <button id="cancel-scrape-results" class="btn btn-secondary">Cerrar</button>
                 <button id="save-scrape-results" class="btn btn-primary">Guardar</button>
             </div>
@@ -490,41 +573,48 @@
 						
                         <!-- Web Scraping Panel (dentro de Gestión de documentos) -->
                         <div id="doc-panel-web-scraping" class="content-panel">
-							<div class="card">
-								<h4 class="text-xl font-semibold text-white mb-6">Configuración de Web Scraping</h4>
-								<div class="space-y-4">
-									<div>
-										<label for="web-scraping-url" class="form-label">URL a Scrapear</label>
-										<input type="url" id="web-scraping-url" class="form-input" placeholder="Ej: https://www.ejemplo.com">
-										<p class="help-text">Introduce la URL de la página web que deseas scrapear.</p>
-									</div>
-									<div>
-										<label for="web-scraping-depth" class="form-label">Profundidad de Scrapeo (<span id="web-scraping-depth-value">1</span>)</label>
-										<input type="range" id="web-scraping-depth" min="0" max="5" value="1" class="slider-track" oninput="document.getElementById('web-scraping-depth-value').innerText = this.value">
-										<p class="help-text">Define cuántos niveles de enlaces internos se seguirán (0 para solo la URL inicial, 1 para enlaces de la URL inicial, etc.).</p>
-									</div>
-									<div class="flex items-center justify-between">
-										<label for="include-images" class="form-label mb-0">Incluir imágenes en el scrapeo</label>
-										<label class="relative inline-flex items-center cursor-pointer">
-											<input type="checkbox" id="include-images" class="sr-only peer">
-											<div class="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-										</label>
-									</div>
-									<p class="help-text">Marca esta opción para descargar también las imágenes encontradas en las páginas.</p>
-									<div class="flex justify-end mt-6">
-										<button id="start-scraping-btn" class="btn btn-primary px-4 py-2 flex items-center space-x-2">
-											<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-											</svg>
-											<span>Iniciar Scrapeo</span>
-										</button>
-									</div>
-									<!-- Area de Estado y Resultados -->
-									<div id="scraping-status-area" class="mt-4 p-3 bg-gray-700 rounded-md text-sm text-gray-300">
-										<!-- Initial text removed -->
-									</div>
-								</div>
-							</div>
+                            <div class="card">
+                                <h4 class="text-xl font-semibold text-white mb-6">Configuración de Web Scraping</h4>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label for="web-scraping-url" class="form-label">URL a Scrapear</label>
+                                        <input type="url" id="web-scraping-url" class="form-input" placeholder="Ej: https://www.ejemplo.com">
+                                        <p class="help-text">Introduce la URL de la página web que deseas scrapear.</p>
+                                    </div>
+                                    <div class="flex items-center relative"> <!-- Added relative for tooltip positioning -->
+                                        <label for="web-scraping-depth" class="form-label mb-0 mr-2">Profundidad de Scrapeo (<span id="web-scraping-depth-value">1</span>)</label>
+                                        <div class="tooltip-container">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block text-gray-400 cursor-help" fill="none" viewBox="0 0 24 24" stroke="currentColor" id="depth-info-icon">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            <div id="depth-tooltip-content" class="tooltip-content">
+                                                Define cuántos niveles de enlaces internos se seguirán. Una profundidad de 0 significa solo la URL inicial. Una profundidad de 1 significa la URL inicial más los enlaces encontrados en ella, y así sucesivamente. Utiliza una estrategia de rastreo en amplitud (BFS), explorando todos los enlaces de un nivel antes de pasar al siguiente.
+                                            </div>
+                                        </div>
+                                        <input type="range" id="web-scraping-depth" min="0" max="5" value="1" class="slider-track ml-3 flex-grow" oninput="document.getElementById('web-scraping-depth-value').innerText = this.value">
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <label for="include-images" class="form-label mb-0">Incluir imágenes en el scrapeo</label>
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" id="include-images" class="sr-only peer">
+                                            <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                                        </label>
+                                    </div>
+                                    <p class="help-text">Marca esta opción para descargar también las imágenes encontradas en las páginas.</p>
+                                    <div class="flex justify-end mt-6">
+                                        <button id="start-scraping-btn" class="btn btn-primary px-4 py-2 flex items-center space-x-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                            </svg>
+                                            <span>Iniciar Scrapeo</span>
+                                        </button>
+                                    </div>
+                                    <!-- Area de Estado y Resultados -->
+                                    <div id="scraping-status-area" class="mt-4 p-3 bg-gray-700 rounded-md text-sm text-gray-300">
+                                        <!-- Initial text removed -->
+                                    </div>
+                                </div>
+                            </div>
 						</div>
 					</div>
                 </div>
@@ -866,9 +956,19 @@
 
                 // Web Scraping Results Modal
                 scrapeResultsModal: document.getElementById('scrape-results-modal'),
+                scrapedPagesList: document.getElementById('scraped-pages-list'),
                 scrapeResultsContent: document.getElementById('scrape-results-content'),
                 saveScrapeResultsBtn: document.getElementById('save-scrape-results'),
                 cancelScrapeResultsBtn: document.getElementById('cancel-scrape-results'),
+                
+                // Metadata inputs (for Scrape Results Modal) - Now global for the scrape operation
+                scrapeMetadataSection: document.getElementById('scrape-metadata-section'),
+                scrapeMetadataKeySelect: document.getElementById('scrape-metadata-key-select'),
+                scrapeNewMetadataKeyInput: document.getElementById('scrape-new-metadata-key-input'),
+                scrapeNewMetadataValueInput: document.getElementById('scrape-new-metadata-value-input'),
+                scrapeAddMetadataBtn: document.getElementById('scrape-add-metadata-btn'),
+                scrapeResetMetadataInputBtn: document.getElementById('scrape-reset-metadata-input-btn'),
+                scrapeMetadataChipsContainer: document.getElementById('scrape-metadata-chips-container'),
 
                 // NEW: Document List and Add Document Modal elements
                 addNewDocumentBtn: document.getElementById('add-new-document-btn'),
@@ -890,6 +990,11 @@
                 metadataChipsContainer: document.getElementById('metadata-chips-container'),
                 cancelAddDocumentBtn: document.getElementById('cancel-add-document'),
                 confirmAddDocumentBtn: document.getElementById('confirm-add-document'),
+
+                
+                // New elements for tooltip
+                depthInfoIcon: document.getElementById('depth-info-icon'),
+                depthTooltipContent: document.getElementById('depth-tooltip-content'),
 
 
                 // Globalconfig-button-panel
@@ -973,8 +1078,15 @@
 
             // Temporary array to hold metadata for the document being added/edited in the modal
             let currentDocumentMetadata = {};
+            let currentMetadata = []; // Temporarily holds metadata for new/edited document (for Add/Edit Document Modal)
+            let scrapedGlobalMetadata = []; // Holds metadata for the entire scrape operation (for Scrape Results Modal)
+            let availableMetadataKeys = new Set(); // Stores all unique metadata keys from loaded documents
+
             let editingDocId = null; // Stores the ID of the document being edited, null for new document
             let selectionMode = false; // NEW: State for document selection mode
+
+            let scrapedPagesData = []; // New array to hold data for multiple scraped pages
+            let currentScrapedPageIndex = -1; // Index of the currently viewed page in the modal
 
             function showToast(message, isError = false) {
                 elements.toastMessage.textContent = message;
@@ -1333,102 +1445,125 @@
                         openEditDocumentModal(docIdToEdit);
                     });
                 });
+
+                // Update available metadata keys set
+                availableMetadataKeys.clear();
+                loadedDocuments.forEach(doc => {
+                    Object.keys(doc.metadata).forEach(key => {availableMetadataKeys.add(key)});
+                });
+                // Populate select dropdowns for both modals
+                populateMetadataKeySelect(elements.newMetadataKeySelect, currentMetadata);
+                populateMetadataKeySelect(elements.scrapeMetadataKeySelect, scrapedGlobalMetadata);
             }
 
-            // Function to populate metadata key select dropdown
-            function populateMetadataKeySelect() {
-                if (!elements.newMetadataKeySelect) return;
-
-                const existingKeys = new Set();
-                loadedDocuments.forEach(doc => {
-                    Object.keys(doc.metadata).forEach(key => existingKeys.add(key));
+             // Render scraped pages list in modal
+            function renderScrapedPagesList() {
+                elements.scrapedPagesList.innerHTML = '';
+                if (scrapedPagesData.length === 0) {
+                    elements.scrapedPagesList.innerHTML = `<li class="text-gray-400">No hay páginas scrapeadas.</li>`;
+                    return;
+                }
+                scrapedPagesData.forEach((page, index) => {
+                    const listItem = document.createElement('li');
+                    listItem.className = `scraped-page-item ${index === currentScrapedPageIndex ? 'active' : ''}`;
+                    listItem.dataset.index = index;
+                    listItem.textContent = `Página ${index + 1}: ${page.url.substring(0, 40)}...`;
+                    elements.scrapedPagesList.appendChild(listItem);
                 });
+            }
 
-                // Clear existing options except "Seleccionar metadata existente" and "Agregar nueva..."
-                elements.newMetadataKeySelect.innerHTML = `
+            // Display selected scraped page content (metadata is now global)
+            function displayScrapedPageContent(index) {
+                if (scrapedPagesData[index]) {
+                    currentScrapedPageIndex = index;
+                    elements.scrapeResultsContent.value = scrapedPagesData[index].content;
+                    renderScrapedPagesList(); // Update active class
+                }
+            }
+
+            // Populate metadata key select dropdown (general function)
+            function populateMetadataKeySelect(selectElement, metadataArray) {
+                selectElement.innerHTML = `
                     <option value="" disabled selected hidden>Seleccionar metadata existente</option>
                     <option value="new-metadata-key">Agregar nueva...</option>
                 `;
 
-                Array.from(existingKeys).sort().forEach(key => {
-                    const option = document.createElement('option');
-                    option.value = key;
-                    option.textContent = key;
-                    elements.newMetadataKeySelect.appendChild(option);
+                const currentKeys = new Set(Object.keys(metadataArray).map(key => key));
+                availableMetadataKeys.forEach(key => {
+                    if (!currentKeys.has(key)) { // Avoid duplicating if already in current keys
+                        const option = document.createElement('option');
+                        option.value = key;
+                        option.textContent = key;
+                        selectElement.appendChild(option);
+                    }
                 });
             }
 
-            // Function to render metadata chips in the modal
-            function renderMetadataChips() {
-                if (!elements.metadataChipsContainer) return;
-                elements.metadataChipsContainer.innerHTML = '';
-                Object.keys(currentDocumentMetadata).forEach(key => {
-                    const chip = document.createElement('span');
+            // Render metadata chips for a document (general function, takes container and metadata array)
+            function renderMetadataChips(container, metadataArray, selectElement, keyInput, valueInput, isDoc) {
+                container.innerHTML = ''; // Clear existing chips
+
+                Object.keys(metadataArray).forEach(key => {
+                    const chip = document.createElement('div');
                     chip.className = 'metadata-chip';
                     chip.innerHTML = `
-                        ${key}: ${currentDocumentMetadata[key]}
-                        <button type="button" data-key="${key}" class="remove-chip-btn">
-                            &times;
+                        <span>${key}: ${metadataArray[key]}</span>
+                        <button type="button" class="remove-chip-btn" data-index="${key}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
                         </button>
                     `;
-                    elements.metadataChipsContainer.appendChild(chip);
+                    container.appendChild(chip);
+                    
+                    if (isDoc)
+                        elements.metadataChipsContainer.appendChild(chip);
                 });
 
-                // Add event listeners to remove buttons on chips
-                elements.metadataChipsContainer.querySelectorAll('.remove-chip-btn').forEach(button => {
-                    button.addEventListener('click', (e) => {
-                        const keyToRemove = e.target.dataset.key;
-                        delete currentDocumentMetadata[keyToRemove];
-                        renderMetadataChips();
+                // Add event listeners to newly rendered chips
+                container.querySelectorAll('.remove-chip-btn').forEach(button => {
+                    button.addEventListener('click', (event) => {
+                        const index = parseInt(event.target.closest('.remove-chip-btn').dataset.index);
+                        removeMetadataChip(index, metadataArray, container, selectElement, keyInput, valueInput);
                     });
                 });
             }
 
-            // Function to add a metadata chip from the modal inputs
-            function addMetadataChip() {
-                let key = elements.newMetadataKeySelect.value;
-                const value = elements.newMetadataValueInput.value.trim();
-                const newKeyInput = elements.newMetadataKeyInput.value.trim();
+            // Add metadata chip (general function, takes elements for specific modal)
+            function addMetadataChip(selectElement, keyInput, valueInput, metadataArray, chipsContainer) {
+                let key = selectElement.value;
+                const value = valueInput.value.trim();
 
-                // If "Agregar nueva..." is selected, use the text input for the key
-                if (elements.newMetadataKeySelect.value === 'new-metadata-key') {
-                    key = newKeyInput;
+                if (key === 'new-metadata-key') {
+                    key = keyInput.value.trim();
                 }
 
-                if (!key || !value) {
-                    showToast('Por favor, selecciona o introduce una clave y un valor para la metadata.', true);
-                    return;
+                if (key && value) {
+                    metadataArray.push({ key: key, value: value });
+                    availableMetadataKeys.add(key); // Add to global available keys
+                    renderMetadataChips(chipsContainer, metadataArray, selectElement, keyInput, valueInput, false);
+                    selectElement.value = ''; // Reset select
+                    keyInput.value = ''; // Reset input
+                    keyInput.classList.add('hidden'); // Hide input
+                    selectElement.classList.remove('hidden'); // Show select
+                    valueInput.value = ''; // Clear value input
+                    populateMetadataKeySelect(selectElement, metadataArray); // Re-populate to include new key
+                } else {
+                    showToast('Por favor, introduce clave y valor para la metadata.', true);
                 }
-
-                if (currentDocumentMetadata.hasOwnProperty(key)) {
-                    showToast(`La clave de metadata "${key}" ya existe.`, true);
-                    return;
-                }
-
-                currentDocumentMetadata[key] = value;
-                renderMetadataChips();
-
-                // Reset inputs
-                elements.newMetadataKeySelect.value = ''; // Reset to placeholder
-                elements.newMetadataKeyInput.value = '';
-                elements.newMetadataKeyInput.classList.add('hidden');
-                elements.newMetadataKeySelect.classList.remove('hidden'); // Ensure select is visible again
-                elements.newMetadataValueInput.value = '';
             }
 
-            // Function to reset metadata input fields
-            function resetMetadataInput() {
-                elements.newMetadataKeySelect.value = ''; // Reset select to placeholder
-                elements.newMetadataKeyInput.value = ''; // Clear new key input
-                elements.newMetadataKeyInput.classList.add('hidden'); // Hide new key input
-                elements.newMetadataKeySelect.classList.remove('hidden'); // Show select
-                elements.newMetadataValueInput.value = ''; // Clear value input
+            // Remove metadata chip (general function, takes metadata array and container)
+            function removeMetadataChip(indexToRemove, metadataArray, chipsContainer, selectElement, keyInput, valueInput) {
+                metadataArray.splice(indexToRemove, 1);
+                renderMetadataChips(chipsContainer, metadataArray, selectElement, keyInput, valueInput, false);
+                populateMetadataKeySelect(selectElement, metadataArray); // Re-populate after removal
             }
 
             // NEW: Function to open modal for editing document metadata
             function openEditDocumentModal(docId) {
                 editingDocId = docId;
-                const docToEdit = loadedDocuments.find(doc => doc.id === docId);
+                const docToEdit = loadedDocuments.find(doc => doc.id == docId);
 
                 if (!docToEdit) {
                     showToast('Documento no encontrado para editar.', true);
@@ -1445,14 +1580,23 @@
                 elements.documentNameDisplay.value = docToEdit.name;
 
                 // Populate current metadata
-                currentDocumentMetadata = { ...docToEdit.metadata }; // Deep copy
-                renderMetadataChips();
-                populateMetadataKeySelect(); // Repopulate dropdown with existing keys
+                currentMetadata = JSON.parse(JSON.stringify(docToEdit.metadata)); // Deep copy
+                renderMetadataChips(elements.metadataChipsContainer, currentMetadata, elements.newMetadataKeySelect, elements.newMetadataKeyInput, elements.newMetadataValueInput, true);
+                populateMetadataKeySelect(elements.newMetadataKeySelect, currentMetadata);
 
                 // Reset metadata input fields in case they were left in 'new-metadata-key' mode
                 resetMetadataInput();
 
                 elements.addDocumentModal.classList.remove('hidden');
+            }
+
+             // Function to reset metadata input fields
+            function resetMetadataInput() {
+                elements.newMetadataKeySelect.value = ''; // Reset select to placeholder
+                elements.newMetadataKeyInput.value = ''; // Clear new key input
+                elements.newMetadataKeyInput.classList.add('hidden'); // Hide new key input
+                elements.newMetadataKeySelect.classList.remove('hidden'); // Show select
+                elements.newMetadataValueInput.value = ''; // Clear value input
             }
 
             // NEW: Function to reset the modal state (for new document creation)
@@ -1467,8 +1611,8 @@
                 elements.newDocumentFileInput.value = ''; // Clear file input
 
                 currentDocumentMetadata = {}; // Reset metadata for new document
-                renderMetadataChips(); // Clear chips
-                populateMetadataKeySelect(); // Repopulate dropdown
+                renderMetadataChips(elements.metadataChipsContainer, currentDocumentMetadata, elements.newMetadataKeySelect, elements.newMetadataKeyInput, elements.newMetadataValueInput, true);
+                populateMetadataKeySelect(elements.newMetadataKeySelect, currentDocumentMetadata);
                 resetMetadataInput(); // Reset metadata input fields
             }
 
@@ -1624,6 +1768,38 @@
                 elements.resetMetadataInputBtn.addEventListener('click', resetMetadataInput);
             }
 
+            // Handle New Metadata Key selection (for Scrape Results Modal)
+            elements.scrapeMetadataKeySelect.addEventListener('change', (event) => {
+                if (event.target.value === 'new-metadata-key') {
+                    elements.scrapeNewMetadataKeyInput.classList.remove('hidden');
+                    elements.scrapeNewMetadataKeyInput.focus();
+                    elements.scrapeMetadataKeySelect.classList.add('hidden');
+                }
+            });
+
+            // Add Metadata Button (for Scrape Results Modal)
+            elements.scrapeAddMetadataBtn.addEventListener('click', () => {
+                addMetadataChip(elements.scrapeMetadataKeySelect, elements.scrapeNewMetadataKeyInput, elements.scrapeNewMetadataValueInput, scrapedGlobalMetadata, elements.scrapeMetadataChipsContainer);
+            });
+
+            // Reset Metadata Input Button (for Scrape Results Modal)
+            elements.scrapeResetMetadataInputBtn.addEventListener('click', () => {
+                elements.scrapeMetadataKeySelect.value = ''; // Reset select
+                elements.scrapeNewMetadataKeyInput.value = ''; // Reset input
+                elements.scrapeNewMetadataKeyInput.classList.add('hidden'); // Hide input
+                elements.scrapeMetadataKeySelect.classList.remove('hidden'); // Show select
+                elements.scrapeNewMetadataValueInput.value = ''; // Clear value input
+            });
+
+            // Remove Metadata Chip (delegated event listener for Scrape Results Modal)
+            elements.scrapeMetadataChipsContainer.addEventListener('click', (event) => {
+                if (event.target.closest('.remove-chip-btn')) {
+                    const index = parseInt(event.target.closest('.remove-chip-btn').dataset.index);
+                    removeMetadataChip(index, scrapedGlobalMetadata, elements.scrapeMetadataChipsContainer, elements.scrapeMetadataKeySelect, elements.scrapeNewMetadataKeyInput, elements.scrapeNewMetadataValueInput);
+                }
+            });
+
+
             // NEW: Document Filter Logic
             if (elements.documentFilterInput) {
                 elements.documentFilterInput.addEventListener('keyup', renderLoadedDocuments);
@@ -1702,10 +1878,30 @@
                         elements.scrapingStatusArea.textContent = `Iniciando scrapeo de "${url}" con profundidad ${depth} y ${includeImages ? 'con' : 'sin'} imágenes...`;
                         showToast(`Iniciando scrapeo de "${url}"...`, false);
 
-                        // Simulate scraping process
+                        // Simulate scraping process and generate multiple pages
+                        scrapedPagesData = []; // Clear previous data
+                        scrapedGlobalMetadata = { // Initialize global metadata for this scrape operation
+                            depth: depth.toString() ,
+                            images_included: includeImages.toString(),
+                            original_url: url
+                        };
+
+                        for (let i = 0; i <= depth; i++) {
+                            const pageUrl = `${url}/page-${i}`;
+                            const pageContent = `# Contenido de la Página ${i + 1}\n\nEste es el contenido scrapeado de la URL: ${pageUrl}.\n\nAquí podría ir más contenido en **formato Markdown**.\n\n## Sección ${i + 1}.1\n\n* Ítem ${i + 1}.1\n* Ítem ${i + 1}.2\n\n\`\`\`javascript\nconsole.log('Código de ejemplo para la página ${i + 1}');\n\`\`\``;
+                            scrapedPagesData.push({
+                                url: pageUrl,
+                                content: pageContent
+                            });
+                        }
+
                         setTimeout(() => {
-                            const dummyXml = `<document>\n  <metadata>\n    <url>${url}</url>\n    <tipo>web-scraping</tipo>\n    <profundidad>${depth}</profundidad>\n    <imagenes>${includeImages}</imagenes>\n  </metadata>\n  <content>\n    <title>Título de la Página Scrapeada</title>\n    <paragraph>Este es un párrafo de ejemplo del contenido scrapeado de la URL: ${url}.</paragraph>\n    <paragraph>Aquí podría ir más contenido extraído.</paragraph>\n  </content>\n</document>`;
-                            elements.scrapeResultsContent.value = dummyXml;
+                            renderScrapedPagesList();
+                            renderMetadataChips(elements.scrapeMetadataChipsContainer, scrapedGlobalMetadata, elements.scrapeMetadataKeySelect, elements.scrapeNewMetadataKeyInput, elements.scrapeNewMetadataValueInput, false);
+                            populateMetadataKeySelect(elements.scrapeMetadataKeySelect, scrapedGlobalMetadata);
+                            if (scrapedPagesData.length > 0) {
+                                displayScrapedPageContent(0); // Display the first page by default
+                            }
                             elements.scrapeResultsModal.classList.remove('hidden');
                             elements.scrapingStatusArea.textContent = 'Scrapeo completado. Revisa los resultados.';
                             showToast('Scrapeo completado. Revisa los resultados.', false);
@@ -1720,33 +1916,34 @@
             // Save Scrape Results
             if (elements.saveScrapeResultsBtn) {
                 elements.saveScrapeResultsBtn.addEventListener('click', () => {
-                    const scrapedXml = elements.scrapeResultsContent.value;
-                    // In a real application, you would send this XML to your backend to save.
-                    console.log('Guardando resultados del scrapeo:', scrapedXml);
+                    // Update the content of the currently selected page in scrapedPagesData
+                    if (currentScrapedPageIndex !== -1) {
+                        scrapedPagesData[currentScrapedPageIndex].content = elements.scrapeResultsContent.value;
+                    }
 
-                    // Extract URL from the XML for metadata
-                    const parser = new DOMParser();
-                    const xmlDoc = parser.parseFromString(scrapedXml, "text/xml");
-                    const urlNode = xmlDoc.querySelector('metadata url');
-                    const scrapedUrl = urlNode ? urlNode.textContent : 'URL Desconocida';
+                    // Combine all scraped page content into a single string
+                    const combinedContent = scrapedPagesData.map(page => page.content).join('\n\n---\n\n'); // Separator for clarity
 
-                    // Add a new document to the loadedDocuments array
+                    // Determine a name for the combined document
+                    const scrapedUrl = elements.webScrapingUrl.value.trim();
+                    const docName = `Scrape Completo: ${scrapedUrl.substring(0, 40)}...`;
+
                     loadedDocuments.push({
-                        id: Date.now() + Math.random(),
+                        id: (Date.now() + Math.random()).toFixed(0),
                         name: `Documento Scrapeado`, // Truncate for display,
                         description: `${scrapedUrl.substring(0, 30)}...`,
-                        metadata: {
-                             tipo: 'web-scraping',
-                             url: scrapedUrl
-                            // You could parse more metadata from the XML here
-                        },
+                        metadata: JSON.parse(JSON.stringify(scrapedGlobalMetadata)),
                         status: 'active', // New documents are active by default
+                        content: combinedContent, // Store the combined content
                     });
 
                     elements.scrapeResultsModal.classList.add('hidden');
                     renderLoadedDocuments();
-                    showToast('Resultados del scrapeo guardados y documento añadido.', false);
+                    showToast('Resultados del scrapeo guardados como un único documento.', false);
                     elements.scrapingStatusArea.textContent = ''; // Clear status after saving
+                    scrapedPagesData = []; // Clear scraped data after saving
+                    scrapedGlobalMetadata = []; // Clear global metadata after saving
+                    currentScrapedPageIndex = -1;
                     
                     elements.webScrapingUrl.value = ''; // Clear URL
                     elements.webScrapingDepth.value = defaultConfig.webScrapingDepth;
@@ -1760,9 +1957,34 @@
                     elements.scrapeResultsModal.classList.add('hidden');
                     showToast('Scrapeo cancelado. Los resultados no fueron guardados.', true);
                     elements.scrapingStatusArea.textContent = ''; // Clear status after cancelling
+                    scrapedPagesData = []; // Clear scraped data
+                    scrapedGlobalMetadata = []; // Clear global metadata
+                    currentScrapedPageIndex = -1;
                 });
             }
 
+            // Handle click on scraped page list item
+            elements.scrapedPagesList.addEventListener('click', (event) => {
+                const listItem = event.target.closest('.scraped-page-item');
+                if (listItem) {
+                    // Save current textarea content back to the data array before switching
+                    if (currentScrapedPageIndex !== -1) {
+                        scrapedPagesData[currentScrapedPageIndex].content = elements.scrapeResultsContent.value;
+                    }
+                    const index = parseInt(listItem.dataset.index);
+                    displayScrapedPageContent(index);
+                }
+            });
+            
+            // Tooltip for Depth Info Icon
+            if (elements.depthInfoIcon && elements.depthTooltipContent) {
+                elements.depthInfoIcon.addEventListener('mouseenter', () => {
+                    elements.depthTooltipContent.classList.add('active');
+                });
+                elements.depthInfoIcon.addEventListener('mouseleave', () => {
+                    elements.depthTooltipContent.classList.remove('active');
+                });
+            }
 
             // Global Save/Reset
             elements.saveButton.addEventListener('click', saveConfiguration);
