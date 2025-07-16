@@ -397,36 +397,36 @@
 
 	<!-- NEW: Modal for Scrape Results -->
     <div id="scrape-results-modal" class="modal hidden">
-        <div class="modal-content flex flex-col h-[80vh] max-w-4xl"> <!-- Changed to flex-col for full width metadata -->
+        <div class="modal-content flex flex-col h-[80vh] max-w-4xl">
             <h3 class="text-xl font-semibold text-white mb-4">Resultados del Scrapeo</h3>
             
-            <!-- Metadata section for scraped results (full width) -->
-            <div id="scrape-metadata-section" class="border border-gray-700 p-4 rounded-md mb-4">
-                <h4 class="text-md font-medium text-gray-300 mb-3">Metadata General del Scrapeo</h4>
+            <!-- Global Metadata section for scraped results (full width) -->
+            <div id="scrape-global-metadata-section" class="border border-gray-700 p-4 rounded-md mb-4">
+                <h4 class="text-md font-medium text-gray-300 mb-3">Metadata General del Scrapeo (Aplicada a todas las páginas)</h4>
                 <div class="flex space-x-2 items-center mb-3">
-                    <select id="scrape-metadata-key-select" class="form-select w-full">
+                    <select id="scrape-global-metadata-key-select" class="form-select w-full">
                         <option value="" disabled selected hidden>Seleccionar metadata existente</option>
                         <option value="new-metadata-key">Agregar nueva...</option>
                     </select>
-                    <input type="text" id="scrape-new-metadata-key-input" class="form-input w-full hidden" placeholder="Nueva clave de metadata">
+                    <input type="text" id="scrape-global-new-metadata-key-input" class="form-input w-full hidden" placeholder="Nueva clave de metadata global">
                     
-                    <input type="text" id="scrape-new-metadata-value-input" class="form-input flex-grow" placeholder="Valor de la metadata">
-                    <button id="scrape-add-metadata-btn" class="btn btn-primary px-3 py-2 text-sm">
+                    <input type="text" id="scrape-global-new-metadata-value-input" class="form-input flex-grow" placeholder="Valor de la metadata global">
+                    <button id="scrape-global-add-metadata-btn" class="btn btn-primary px-3 py-2 text-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                         </svg>
                     </button>
-                    <button id="scrape-reset-metadata-input-btn" class="btn btn-secondary px-3 py-2 text-sm">
+                    <button id="scrape-global-reset-metadata-input-btn" class="btn btn-secondary px-3 py-2 text-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004 12v.622m15.356-2A8.001 8.001 0 0120 12v.622m-2.489 4.414l-2.489 2.489m0 0l-2.489-2.489m2.489 2.489V10" />
                         </svg>
                     </button>
                 </div>
-                <div id="scrape-metadata-chips-container" class="mt-4 flex flex-wrap gap-2">
-                    <!-- Metadata chips for scraped page will be added here by JS -->
+                <div id="scrape-global-metadata-chips-container" class="mt-4 flex flex-wrap gap-2">
+                    <!-- Global Metadata chips will be added here by JS -->
                 </div>
             </div>
-            <!-- End Metadata section -->
+            <!-- End Global Metadata section -->
 
             <div class="flex flex-grow"> <!-- Two-column layout for pages and content -->
                 <div class="w-1/3 border-r border-gray-700 p-4 overflow-y-auto">
@@ -438,6 +438,35 @@
                 <div class="flex-grow p-4 flex flex-col">
                     <h3 class="text-xl font-semibold text-white mb-4">Contenido de la Página</h3>
                     <textarea id="scrape-results-content" class="form-textarea flex-grow mb-4 font-mono text-sm"></textarea>
+                    
+                    <!-- Page-specific Metadata section -->
+                    <div id="scrape-page-metadata-section" class="border border-gray-700 p-4 rounded-md mt-4">
+                        <h4 class="text-md font-medium text-gray-300 mb-3">Metadata de la Página Actual</h4>
+                        <div class="flex space-x-2 items-center mb-3">
+                            <select id="scrape-page-metadata-key-select" class="form-select w-full">
+                                <option value="" disabled selected hidden>Seleccionar metadata existente</option>
+                                <option value="new-metadata-key">Agregar nueva...</option>
+                            </select>
+                            <input type="text" id="scrape-page-new-metadata-key-input" class="form-input w-full hidden" placeholder="Nueva clave de metadata de página">
+                            
+                            <input type="text" id="scrape-page-new-metadata-value-input" class="form-input flex-grow" placeholder="Valor de la metadata de página">
+                            <button id="scrape-page-add-metadata-btn" class="btn btn-primary px-3 py-2 text-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                </svg>
+                            </button>
+                            <button id="scrape-page-reset-metadata-input-btn" class="btn btn-secondary px-3 py-2 text-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004 12v.622m15.356-2A8.001 8.001 0 0120 12v.622m-2.489 4.414l-2.489 2.489m0 0l-2.489-2.489m2.489 2.489V10" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div id="scrape-page-metadata-chips-container" class="mt-4 flex flex-wrap gap-2">
+                            <!-- Page-specific Metadata chips will be added here by JS -->
+                        </div>
+                    </div>
+                    <!-- End Page-specific Metadata section -->
+
                 </div>
             </div>
 
@@ -961,14 +990,21 @@
                 saveScrapeResultsBtn: document.getElementById('save-scrape-results'),
                 cancelScrapeResultsBtn: document.getElementById('cancel-scrape-results'),
                 
-                // Metadata inputs (for Scrape Results Modal) - Now global for the scrape operation
-                scrapeMetadataSection: document.getElementById('scrape-metadata-section'),
-                scrapeMetadataKeySelect: document.getElementById('scrape-metadata-key-select'),
-                scrapeNewMetadataKeyInput: document.getElementById('scrape-new-metadata-key-input'),
-                scrapeNewMetadataValueInput: document.getElementById('scrape-new-metadata-value-input'),
-                scrapeAddMetadataBtn: document.getElementById('scrape-add-metadata-btn'),
-                scrapeResetMetadataInputBtn: document.getElementById('scrape-reset-metadata-input-btn'),
-                scrapeMetadataChipsContainer: document.getElementById('scrape-metadata-chips-container'),
+                // Global Metadata inputs (for Scrape Results Modal)
+                scrapeGlobalMetadataKeySelect: document.getElementById('scrape-global-metadata-key-select'),
+                scrapeGlobalNewMetadataKeyInput: document.getElementById('scrape-global-new-metadata-key-input'),
+                scrapeGlobalNewMetadataValueInput: document.getElementById('scrape-global-new-metadata-value-input'),
+                scrapeGlobalAddMetadataBtn: document.getElementById('scrape-global-add-metadata-btn'),
+                scrapeGlobalResetMetadataInputBtn: document.getElementById('scrape-global-reset-metadata-input-btn'),
+                scrapeGlobalMetadataChipsContainer: document.getElementById('scrape-global-metadata-chips-container'),
+
+                // Page-specific Metadata inputs (for Scrape Results Modal)
+                scrapePageMetadataKeySelect: document.getElementById('scrape-page-metadata-key-select'),
+                scrapePageNewMetadataKeyInput: document.getElementById('scrape-page-new-metadata-key-input'),
+                scrapePageNewMetadataValueInput: document.getElementById('scrape-page-new-metadata-value-input'),
+                scrapePageAddMetadataBtn: document.getElementById('scrape-page-add-metadata-btn'),
+                scrapePageResetMetadataInputBtn: document.getElementById('scrape-page-reset-metadata-input-btn'),
+                scrapePageMetadataChipsContainer: document.getElementById('scrape-page-metadata-chips-container'),
 
                 // NEW: Document List and Add Document Modal elements
                 addNewDocumentBtn: document.getElementById('add-new-document-btn'),
@@ -1059,7 +1095,7 @@
                 youtubeLanguage: 'en',
 
                 // NEW Document Management defaults
-                webScrapingDepth: 0,
+                webScrapingDepth: 1,
                 includeImages: false,
             };
 
@@ -1453,7 +1489,8 @@
                 });
                 // Populate select dropdowns for both modals
                 populateMetadataKeySelect(elements.newMetadataKeySelect, currentMetadata);
-                populateMetadataKeySelect(elements.scrapeMetadataKeySelect, scrapedGlobalMetadata);
+                populateMetadataKeySelect(elements.scrapeGlobalMetadataKeySelect, scrapedGlobalMetadata);
+                populateMetadataKeySelect(elements.scrapePageMetadataKeySelect, scrapedPagesData[currentScrapedPageIndex]?.individualMetadata || []);
             }
 
              // Render scraped pages list in modal
@@ -1472,11 +1509,29 @@
                 });
             }
 
-            // Display selected scraped page content (metadata is now global)
+            // Display selected scraped page content and its individual metadata
             function displayScrapedPageContent(index) {
                 if (scrapedPagesData[index]) {
                     currentScrapedPageIndex = index;
                     elements.scrapeResultsContent.value = scrapedPagesData[index].content;
+                    
+                    // Render page-specific metadata chips
+                    renderMetadataChips(
+                        elements.scrapePageMetadataChipsContainer, 
+                        scrapedPagesData[currentScrapedPageIndex].individualMetadata,
+                        elements.scrapePageMetadataKeySelect,
+                        elements.scrapePageNewMetadataKeyInput,
+                        elements.scrapePageNewMetadataValueInput
+                    );
+                    populateMetadataKeySelect(elements.scrapePageMetadataKeySelect, scrapedPagesData[currentScrapedPageIndex].individualMetadata);
+                    
+                    // Reset page-specific metadata input fields
+                    elements.scrapePageNewMetadataKeyInput.classList.add('hidden');
+                    elements.scrapePageNewMetadataKeyInput.value = '';
+                    elements.scrapePageMetadataKeySelect.classList.remove('hidden');
+                    elements.scrapePageMetadataKeySelect.value = '';
+                    elements.scrapePageNewMetadataValueInput.value = '';
+
                     renderScrapedPagesList(); // Update active class
                 }
             }
@@ -1768,34 +1823,71 @@
                 elements.resetMetadataInputBtn.addEventListener('click', resetMetadataInput);
             }
 
-            // Handle New Metadata Key selection (for Scrape Results Modal)
-            elements.scrapeMetadataKeySelect.addEventListener('change', (event) => {
+            // Handle New Global Metadata Key selection (for Scrape Results Modal)
+            elements.scrapeGlobalMetadataKeySelect.addEventListener('change', (event) => {
                 if (event.target.value === 'new-metadata-key') {
-                    elements.scrapeNewMetadataKeyInput.classList.remove('hidden');
-                    elements.scrapeNewMetadataKeyInput.focus();
-                    elements.scrapeMetadataKeySelect.classList.add('hidden');
+                    elements.scrapeGlobalNewMetadataKeyInput.classList.remove('hidden');
+                    elements.scrapeGlobalNewMetadataKeyInput.focus();
+                    elements.scrapeGlobalMetadataKeySelect.classList.add('hidden');
                 }
             });
 
-            // Add Metadata Button (for Scrape Results Modal)
-            elements.scrapeAddMetadataBtn.addEventListener('click', () => {
-                addMetadataChip(elements.scrapeMetadataKeySelect, elements.scrapeNewMetadataKeyInput, elements.scrapeNewMetadataValueInput, scrapedGlobalMetadata, elements.scrapeMetadataChipsContainer);
+            // Add Global Metadata Button (for Scrape Results Modal)
+            elements.scrapeGlobalAddMetadataBtn.addEventListener('click', () => {
+                addMetadataChip(elements.scrapeGlobalMetadataKeySelect, elements.scrapeGlobalNewMetadataKeyInput, elements.scrapeGlobalNewMetadataValueInput, scrapedGlobalMetadata, elements.scrapeGlobalMetadataChipsContainer);
             });
 
-            // Reset Metadata Input Button (for Scrape Results Modal)
-            elements.scrapeResetMetadataInputBtn.addEventListener('click', () => {
-                elements.scrapeMetadataKeySelect.value = ''; // Reset select
-                elements.scrapeNewMetadataKeyInput.value = ''; // Reset input
-                elements.scrapeNewMetadataKeyInput.classList.add('hidden'); // Hide input
-                elements.scrapeMetadataKeySelect.classList.remove('hidden'); // Show select
-                elements.scrapeNewMetadataValueInput.value = ''; // Clear value input
+            // Reset Global Metadata Input Button (for Scrape Results Modal)
+            elements.scrapeGlobalResetMetadataInputBtn.addEventListener('click', () => {
+                elements.scrapeGlobalMetadataKeySelect.value = ''; // Reset select
+                elements.scrapeGlobalNewMetadataKeyInput.value = ''; // Reset input
+                elements.scrapeGlobalNewMetadataKeyInput.classList.add('hidden'); // Hide input
+                elements.scrapeGlobalMetadataKeySelect.classList.remove('hidden'); // Show select
+                elements.scrapeGlobalNewMetadataValueInput.value = ''; // Clear value input
             });
 
-            // Remove Metadata Chip (delegated event listener for Scrape Results Modal)
-            elements.scrapeMetadataChipsContainer.addEventListener('click', (event) => {
+            // Remove Global Metadata Chip (delegated event listener for Scrape Results Modal)
+            elements.scrapeGlobalMetadataChipsContainer.addEventListener('click', (event) => {
                 if (event.target.closest('.remove-chip-btn')) {
                     const index = parseInt(event.target.closest('.remove-chip-btn').dataset.index);
-                    removeMetadataChip(index, scrapedGlobalMetadata, elements.scrapeMetadataChipsContainer, elements.scrapeMetadataKeySelect, elements.scrapeNewMetadataKeyInput, elements.scrapeNewMetadataValueInput);
+                    removeMetadataChip(index, scrapedGlobalMetadata, elements.scrapeGlobalMetadataChipsContainer, elements.scrapeGlobalMetadataKeySelect, elements.scrapeGlobalNewMetadataKeyInput, elements.scrapeGlobalNewMetadataValueInput);
+                }
+            });
+
+            // Handle New Page Metadata Key selection (for Scrape Results Modal)
+            elements.scrapePageMetadataKeySelect.addEventListener('change', (event) => {
+                if (event.target.value === 'new-metadata-key') {
+                    elements.scrapePageNewMetadataKeyInput.classList.remove('hidden');
+                    elements.scrapePageNewMetadataKeyInput.focus();
+                    elements.scrapePageMetadataKeySelect.classList.add('hidden');
+                }
+            });
+
+            // Add Page Metadata Button (for Scrape Results Modal)
+            elements.scrapePageAddMetadataBtn.addEventListener('click', () => {
+                if (currentScrapedPageIndex !== -1) {
+                    addMetadataChip(elements.scrapePageMetadataKeySelect, elements.scrapePageNewMetadataKeyInput, elements.scrapePageNewMetadataValueInput, scrapedPagesData[currentScrapedPageIndex].individualMetadata, elements.scrapePageMetadataChipsContainer);
+                } else {
+                    showToast('Por favor, selecciona una página para añadir metadatos.', true);
+                }
+            });
+
+            // Reset Page Metadata Input Button (for Scrape Results Modal)
+            elements.scrapePageResetMetadataInputBtn.addEventListener('click', () => {
+                elements.scrapePageMetadataKeySelect.value = ''; // Reset select
+                elements.scrapePageNewMetadataKeyInput.value = ''; // Reset input
+                elements.scrapePageNewMetadataKeyInput.classList.add('hidden'); // Hide input
+                elements.scrapePageMetadataKeySelect.classList.remove('hidden'); // Show select
+                elements.scrapePageNewMetadataValueInput.value = ''; // Clear value input
+            });
+
+            // Remove Page Metadata Chip (delegated event listener for Scrape Results Modal)
+            elements.scrapePageMetadataChipsContainer.addEventListener('click', (event) => {
+                if (event.target.closest('.remove-chip-btn')) {
+                    const index = parseInt(event.target.closest('.remove-chip-btn').dataset.index);
+                    if (currentScrapedPageIndex !== -1) {
+                        removeMetadataChip(index, scrapedPagesData[currentScrapedPageIndex].individualMetadata, elements.scrapePageMetadataChipsContainer, elements.scrapePageMetadataKeySelect, elements.scrapePageNewMetadataKeyInput, elements.scrapePageNewMetadataValueInput);
+                    }
                 }
             });
 
@@ -1891,14 +1983,15 @@
                             const pageContent = `# Contenido de la Página ${i + 1}\n\nEste es el contenido scrapeado de la URL: ${pageUrl}.\n\nAquí podría ir más contenido en **formato Markdown**.\n\n## Sección ${i + 1}.1\n\n* Ítem ${i + 1}.1\n* Ítem ${i + 1}.2\n\n\`\`\`javascript\nconsole.log('Código de ejemplo para la página ${i + 1}');\n\`\`\``;
                             scrapedPagesData.push({
                                 url: pageUrl,
-                                content: pageContent
+                                content: pageContent,
+                                individualMetadata: {'page_index': i.toString() }
                             });
                         }
 
                         setTimeout(() => {
                             renderScrapedPagesList();
-                            renderMetadataChips(elements.scrapeMetadataChipsContainer, scrapedGlobalMetadata, elements.scrapeMetadataKeySelect, elements.scrapeNewMetadataKeyInput, elements.scrapeNewMetadataValueInput, false);
-                            populateMetadataKeySelect(elements.scrapeMetadataKeySelect, scrapedGlobalMetadata);
+                            renderMetadataChips(elements.scrapeGlobalMetadataChipsContainer, scrapedGlobalMetadata, elements.scrapeGlobalMetadataKeySelect, elements.scrapeGlobalNewMetadataKeyInput, elements.scrapeGlobalNewMetadataValueInput);
+                            populateMetadataKeySelect(elements.scrapeGlobalMetadataKeySelect, scrapedGlobalMetadata);
                             if (scrapedPagesData.length > 0) {
                                 displayScrapedPageContent(0); // Display the first page by default
                             }
@@ -1921,20 +2014,24 @@
                         scrapedPagesData[currentScrapedPageIndex].content = elements.scrapeResultsContent.value;
                     }
 
-                    // Combine all scraped page content into a single string
-                    const combinedContent = scrapedPagesData.map(page => page.content).join('\n\n---\n\n'); // Separator for clarity
-
-                    // Determine a name for the combined document
                     const scrapedUrl = elements.webScrapingUrl.value.trim();
-                    const docName = `Scrape Completo: ${scrapedUrl.substring(0, 40)}...`;
-
-                    loadedDocuments.push({
-                        id: (Date.now() + Math.random()).toFixed(0),
-                        name: `Documento Scrapeado`, // Truncate for display,
-                        description: `${scrapedUrl.substring(0, 30)}...`,
-                        metadata: JSON.parse(JSON.stringify(scrapedGlobalMetadata)),
-                        status: 'active', // New documents are active by default
-                        content: combinedContent, // Store the combined content
+                    // Add each scraped page as a new document to the loadedDocuments array
+                    scrapedPagesData.forEach((scrapedPage, index) => {
+                    
+                        // Combine global and individual page metadata
+                        const combinedMetadata = {
+                            ...JSON.parse(JSON.stringify(scrapedGlobalMetadata)), // Deep copy global metadata
+                            ...JSON.parse(JSON.stringify(scrapedPage.individualMetadata)) // Deep copy individual metadata
+                        };
+                    
+                        loadedDocuments.push({
+                            id: ((Date.now() + Math.random()) + index).toFixed(0),
+                            name: `Scraped: ${scrapedPage.url.substring(0, 30)}... (Pág ${index + 1})`, // Truncate for display and add page number
+                            active: true,
+                            content: scrapedPage.content, // Store individual page content
+                            description: `${scrapedUrl.substring(0, 30)}...`,
+                            metadata: JSON.parse(JSON.stringify(combinedMetadata)),
+                        });
                     });
 
                     elements.scrapeResultsModal.classList.add('hidden');
